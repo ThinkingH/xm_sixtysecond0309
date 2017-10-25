@@ -47,31 +47,39 @@ class HySix1015 extends HySix{
 		
 		$sql_where = "";
 		
-		if(''!==(string)$this->searchstr) {
+		if(''===(string)$this->searchstr) {
+			if(''!==(string)$this->classify1) {
+				$sql_where .= " classify1='".$this->classify1."' and ";
+			}
+			if(''!==(string)$this->classify2) {
+				$sql_where .= " classify2='".$this->classify2."' and ";
+			}
+			if(''!==(string)$this->classify3) {
+				$sql_where .= " classify3='".$this->classify3."' and ";
+			}
+			if(''!==(string)$this->classify4) {
+				$sql_where .= " classify4='".$this->classify4."' and ";
+			}
+			if(''!==(string)$this->msgjihe) {
+				$sql_where .= " msgjihe='".$this->msgjihe."' and ";
+			}
+			
+			if($sql_where!='') {
+				$sql_where = " where ".rtrim($sql_where,'and ');
+			}
+			
+			
+		}else {
 			$sql_where .= " biaoti like '%".$this->searchstr."%' or ";
-		}
-		if(''!==(string)$this->searchstr) {
 			$sql_where .= " biaotichild like '%".$this->searchstr."%' or ";
-		}
-		if(''!==(string)$this->classify1) {
-			$sql_where .= " classify1='".$this->classify1."' or ";
-		}
-		if(''!==(string)$this->classify2) {
-			$sql_where .= " classify2='".$this->classify2."' or ";
-		}
-		if(''!==(string)$this->classify3) {
-			$sql_where .= " classify3='".$this->classify3."' or ";
-		}
-		if(''!==(string)$this->classify4) {
-			$sql_where .= " classify4='".$this->classify4."' or ";
-		}
-		if(''!==(string)$this->msgjihe) {
-			$sql_where .= " msgjihe='".$this->msgjihe."' or ";
+			
+			if($sql_where!='') {
+				$sql_where = " where ".rtrim($sql_where,'or ');
+			}
+			
 		}
 		
-		if($sql_where!='') {
-			$sql_where = " where ".rtrim($sql_where,'or ');
-		}
+		
 		
 		
 		$sql_count_getvideo = "select count(*) as con from sixty_video ".$sql_where;

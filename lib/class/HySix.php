@@ -668,8 +668,8 @@ class HySix{
 		$datastr = HyItems::hy_urlcreate($dataarr);
 		//模拟数据访问
 		$r = HyItems::vpost($qiniurl,$datastr,$header=array(),$timeout=5000 );
-		//$this->log_str .= var_export($dataarr,1)."\n";
-		//$this->log_str .= var_export($r,1)."\n";
+		$this->log_str .= var_export($dataarr,1)."\n";
+		$this->log_str .= var_export($r,1)."\n";
 		if(substr($r['content'],0,1)!='#' && $r['httpcode']=='200'){
 			$truepath = json_decode($r['content'], true);
 			//$arr = unserialize(BUCKETSTR);//获取七牛访问链接

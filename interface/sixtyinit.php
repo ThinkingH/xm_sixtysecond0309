@@ -15,9 +15,7 @@ require_once("../lib/c.core.php");
 $mname = basename(__FILE__,'.php');
 
 
-if( empty($_REQUEST) ){
-	exit('error,no parameter');
-}
+
 
 $true_ip = HyItems::hy_get_client_ip();
 $getbaseurl   = $_SERVER["REQUEST_URI"]; //当前目录地址及get参数
@@ -33,87 +31,99 @@ $filepath = LOGPATH.date('Y_m').'/';
 //文件的名称
 $filename = date('Y_m_d').'_'.$mname;
 
+$log_str .= var_export($_POST,1).var_export($_GET,1);
+
+HyItems::hy_writelog($filepath, $filename, $log_str);
+
+
+// if( empty($_POST) ){
+// 	$echojsonstr = HyItems::echo2clientjson('400','未找到提交数据');
+// 	$log_str = $echojsonstr."\n";
+// 	HyItems::hy_writelog($filepath, $filename, $log_str);
+// 	exit($echojsonstr);
+// }
+
 
 $inputdataarr = array();
 
-$inputdataarr['version']         = trim(HyItems::arrayItem ( $_REQUEST, 'version' ));    //接口版本,后台接口版本，与app无关,每个version版本均对应一个版本秘钥,100~999
-$inputdataarr['system']          = trim(HyItems::arrayItem ( $_REQUEST, 'system' ));    //操作系统，IOS/ANDROID/PC，非IOS、PC全部默认为ANDROID
-$inputdataarr['sysversion']      = trim(HyItems::arrayItem ( $_REQUEST, 'sysversion' ));    ////APP系统版本，例100
-$inputdataarr['thetype']         = trim(HyItems::arrayItem ( $_REQUEST, 'thetype' ));    //操作类型编号，4位长度，第一位为内部层级版本号，后三位自定义
-$inputdataarr['nowtime']         = trim(HyItems::arrayItem ( $_REQUEST, 'nowtime' ));    //时间戳，预留字段，用于后期校验增加安全性使用
-$inputdataarr['md5key']          = trim(HyItems::arrayItem ( $_REQUEST, 'md5key' ));     //MD5校验值采用md5(version+system+sysversion+thetype+nowtime+ckey)//通讯层校验
+$inputdataarr['version']         = trim(HyItems::arrayItem ( $_POST, 'version' ));    //接口版本,后台接口版本，与app无关,每个version版本均对应一个版本秘钥,100~999
+$inputdataarr['system']          = trim(HyItems::arrayItem ( $_POST, 'system' ));    //操作系统，IOS/ANDROID/PC，非IOS、PC全部默认为ANDROID
+$inputdataarr['sysversion']      = trim(HyItems::arrayItem ( $_POST, 'sysversion' ));    ////APP系统版本，例100
+$inputdataarr['thetype']         = trim(HyItems::arrayItem ( $_POST, 'thetype' ));    //操作类型编号，4位长度，第一位为内部层级版本号，后三位自定义
+$inputdataarr['nowtime']         = trim(HyItems::arrayItem ( $_POST, 'nowtime' ));    //时间戳，预留字段，用于后期校验增加安全性使用
+$inputdataarr['md5key']          = trim(HyItems::arrayItem ( $_POST, 'md5key' ));     //MD5校验值采用md5(version+system+sysversion+thetype+nowtime+ckey)//通讯层校验
 
-$inputdataarr['usertype']        = trim(HyItems::arrayItem ( $_REQUEST, 'usertype' ));   //用户类型，1为正常用户，其他为非用户
-$inputdataarr['userid']          = trim(HyItems::arrayItem ( $_REQUEST, 'userid' ));     //用户在平台的标识编号
-$inputdataarr['userkey']         = trim(HyItems::arrayItem ( $_REQUEST, 'userkey' ));    //用户通讯的校验密钥
+$inputdataarr['usertype']        = trim(HyItems::arrayItem ( $_POST, 'usertype' ));   //用户类型，1为正常用户，其他为非用户
+$inputdataarr['userid']          = trim(HyItems::arrayItem ( $_POST, 'userid' ));     //用户在平台的标识编号
+$inputdataarr['userkey']         = trim(HyItems::arrayItem ( $_POST, 'userkey' ));    //用户通讯的校验密钥
 
-$inputdataarr['phone']           = trim(HyItems::arrayItem ( $_REQUEST, 'phone' ));       //手机号必须为11位
-$inputdataarr['vcode']           = trim(HyItems::arrayItem ( $_REQUEST, 'vcode' ));       //手机下发验证码
+$inputdataarr['phone']           = trim(HyItems::arrayItem ( $_POST, 'phone' ));       //手机号必须为11位
+$inputdataarr['vcode']           = trim(HyItems::arrayItem ( $_POST, 'vcode' ));       //手机下发验证码
 
-$inputdataarr['pagesize']        = trim(HyItems::arrayItem ( $_REQUEST, 'pagesize' ));            //每页的条数，数值介于1到200之间
-$inputdataarr['page']            = trim(HyItems::arrayItem ( $_REQUEST, 'page' ));            //数据请求对应页数
+$inputdataarr['pagesize']        = trim(HyItems::arrayItem ( $_POST, 'pagesize' ));            //每页的条数，数值介于1到200之间
+$inputdataarr['page']            = trim(HyItems::arrayItem ( $_POST, 'page' ));            //数据请求对应页数
 
-$inputdataarr['yijian']          = trim(HyItems::arrayItem ( $_REQUEST, 'yijian' ));       //用户反馈的意见内容
-$inputdataarr['sex']             = trim(HyItems::arrayItem ( $_REQUEST, 'sex' ));           //性别，1男，2女，3保密
-$inputdataarr['birthday']        = trim(HyItems::arrayItem ( $_REQUEST, 'birthday' ));      //生日
-$inputdataarr['nickname']        = trim(HyItems::arrayItem ( $_REQUEST, 'nickname' ));       //用户昵称
-$inputdataarr['describes']        = trim(HyItems::arrayItem ( $_REQUEST, 'describes' ));       //用户描述介绍
-$inputdataarr['headimgurl']        = trim(HyItems::arrayItem ( $_REQUEST, 'headimgurl' ));       //headimgurl
+$inputdataarr['yijian']          = trim(HyItems::arrayItem ( $_POST, 'yijian' ));       //用户反馈的意见内容
+$inputdataarr['sex']             = trim(HyItems::arrayItem ( $_POST, 'sex' ));           //性别，1男，2女，3保密
+$inputdataarr['birthday']        = trim(HyItems::arrayItem ( $_POST, 'birthday' ));      //生日
+$inputdataarr['nickname']        = trim(HyItems::arrayItem ( $_POST, 'nickname' ));       //用户昵称
+$inputdataarr['describes']        = trim(HyItems::arrayItem ( $_POST, 'describes' ));       //用户描述介绍
+$inputdataarr['headimgurl']        = trim(HyItems::arrayItem ( $_POST, 'headimgurl' ));       //headimgurl
 
-$inputdataarr['houzhui']        = trim(HyItems::arrayItem ( $_REQUEST, 'houzhui' ));             //图片的后缀
-$inputdataarr['imgdata']        = trim(HyItems::arrayItem ( $_REQUEST, 'imgdata' ));             //图片
+$inputdataarr['houzhui']        = trim(HyItems::arrayItem ( $_POST, 'houzhui' ));             //图片的后缀
+$inputdataarr['imgdata']        = trim(HyItems::arrayItem ( $_POST, 'imgdata' ));             //图片
 
-$inputdataarr['jiguangid']        = trim(HyItems::arrayItem ( $_REQUEST, 'jiguangid' ));             //极光id
-$inputdataarr['openid']           = trim(HyItems::arrayItem ( $_REQUEST, 'openid' ));             //微信的openid
-$inputdataarr['dataid']           = trim(HyItems::arrayItem ( $_REQUEST, 'dataid' ));             //视频id字段
-$inputdataarr['nowid']       = trim(HyItems::arrayItem ( $_REQUEST, 'nowid' ));  //请求的数据id字段
-$inputdataarr['typeid']       = trim(HyItems::arrayItem ( $_REQUEST, 'typeid' ));  //类型id字段（1文字评论，2图片评论）
-$inputdataarr['contentdata']       = trim(HyItems::arrayItem ( $_REQUEST, 'contentdata' ));  //内容数据
-
-
-$inputdataarr['delid']        = trim(HyItems::arrayItem ( $_REQUEST, 'delid' ));             //客户端存储--数据删除id，多个id用逗号分隔
-$inputdataarr['box']        = trim(HyItems::arrayItem ( $_REQUEST, 'box' ));             //客户端存储--分类盒子指定
-$inputdataarr['key1']        = trim(HyItems::arrayItem ( $_REQUEST, 'key1' ));             //客户端存储--分类键名指定，后面可模糊匹配，例，a可匹配ab,abc,aaa等a开头键名
-$inputdataarr['val1']        = trim(HyItems::arrayItem ( $_REQUEST, 'val1' ));             //客户端存储--值1
-$inputdataarr['val2']        = trim(HyItems::arrayItem ( $_REQUEST, 'val2' ));             //客户端存储--值1
-$inputdataarr['val3']        = trim(HyItems::arrayItem ( $_REQUEST, 'val3' ));             //客户端存储--值1
+$inputdataarr['jiguangid']        = trim(HyItems::arrayItem ( $_POST, 'jiguangid' ));             //极光id
+$inputdataarr['openid']           = trim(HyItems::arrayItem ( $_POST, 'openid' ));             //微信的openid
+$inputdataarr['dataid']           = trim(HyItems::arrayItem ( $_POST, 'dataid' ));             //视频id字段
+$inputdataarr['nowid']       = trim(HyItems::arrayItem ( $_POST, 'nowid' ));  //请求的数据id字段
+$inputdataarr['typeid']       = trim(HyItems::arrayItem ( $_POST, 'typeid' ));  //类型id字段（1文字评论，2图片评论）
+$inputdataarr['contentdata']       = trim(HyItems::arrayItem ( $_POST, 'contentdata' ));  //内容数据
 
 
-$inputdataarr['sharequan']           = trim(HyItems::arrayItem ( $_REQUEST, 'sharequan' ));//是否分享到朋友圈  设置固定值666
-$inputdataarr['sharefriend']         = trim(HyItems::arrayItem ( $_REQUEST, 'sharefriend' ));//是否分享到好友    设置固定值888
-
-$inputdataarr['lat']         = trim(HyItems::arrayItem ( $_REQUEST, 'lat' ));//纬度
-$inputdataarr['lng']         = trim(HyItems::arrayItem ( $_REQUEST, 'lng' ));//经度
-
-$inputdataarr['imgwidth']        = trim(HyItems::arrayItem ( $_REQUEST, 'imgwidth' ));
-$inputdataarr['imgheight']        = trim(HyItems::arrayItem ( $_REQUEST, 'imgheight' ));
-$inputdataarr['classtype']        = trim(HyItems::arrayItem ( $_REQUEST, 'classtype' )); //分类字段str
-$inputdataarr['searchstr']        = trim(HyItems::arrayItem ( $_REQUEST, 'searchstr' )); //查询字符串
-$inputdataarr['classify1']        = trim(HyItems::arrayItem ( $_REQUEST, 'classify1' )); //分类1
-$inputdataarr['classify2']        = trim(HyItems::arrayItem ( $_REQUEST, 'classify2' )); //分类2
-$inputdataarr['classify3']        = trim(HyItems::arrayItem ( $_REQUEST, 'classify3' )); //分类3
-$inputdataarr['classify4']        = trim(HyItems::arrayItem ( $_REQUEST, 'classify4' )); //分类4
-$inputdataarr['msgjihe']        = trim(HyItems::arrayItem ( $_REQUEST, 'msgjihe' )); //特辑集合id
+$inputdataarr['delid']        = trim(HyItems::arrayItem ( $_POST, 'delid' ));             //客户端存储--数据删除id，多个id用逗号分隔
+$inputdataarr['box']        = trim(HyItems::arrayItem ( $_POST, 'box' ));             //客户端存储--分类盒子指定
+$inputdataarr['key1']        = trim(HyItems::arrayItem ( $_POST, 'key1' ));             //客户端存储--分类键名指定，后面可模糊匹配，例，a可匹配ab,abc,aaa等a开头键名
+$inputdataarr['val1']        = trim(HyItems::arrayItem ( $_POST, 'val1' ));             //客户端存储--值1
+$inputdataarr['val2']        = trim(HyItems::arrayItem ( $_POST, 'val2' ));             //客户端存储--值1
+$inputdataarr['val3']        = trim(HyItems::arrayItem ( $_POST, 'val3' ));             //客户端存储--值1
 
 
+$inputdataarr['sharequan']     = trim(HyItems::arrayItem ( $_POST, 'sharequan' ));//是否分享到朋友圈  设置固定值666
+$inputdataarr['sharefriend']   = trim(HyItems::arrayItem ( $_POST, 'sharefriend' ));//是否分享到好友    设置固定值888
+
+$inputdataarr['lat']         = trim(HyItems::arrayItem ( $_POST, 'lat' ));//纬度
+$inputdataarr['lng']         = trim(HyItems::arrayItem ( $_POST, 'lng' ));//经度
+
+$inputdataarr['imgwidth']        = trim(HyItems::arrayItem ( $_POST, 'imgwidth' ));
+$inputdataarr['imgheight']        = trim(HyItems::arrayItem ( $_POST, 'imgheight' ));
+$inputdataarr['classtype']        = trim(HyItems::arrayItem ( $_POST, 'classtype' )); //分类字段str
+$inputdataarr['searchstr']        = trim(HyItems::arrayItem ( $_POST, 'searchstr' )); //查询字符串
+$inputdataarr['classify1']        = trim(HyItems::arrayItem ( $_POST, 'classify1' )); //分类1
+$inputdataarr['classify2']        = trim(HyItems::arrayItem ( $_POST, 'classify2' )); //分类2
+$inputdataarr['classify3']        = trim(HyItems::arrayItem ( $_POST, 'classify3' )); //分类3
+$inputdataarr['classify4']        = trim(HyItems::arrayItem ( $_POST, 'classify4' )); //分类4
+$inputdataarr['msgjihe']        = trim(HyItems::arrayItem ( $_POST, 'msgjihe' )); //特辑集合id
 
 
-$inputdataarr['touserid']  = trim(HyItems::arrayItem ( $_REQUEST, 'touserid' ));
-$inputdataarr['cid']      = trim(HyItems::arrayItem ( $_REQUEST, 'cid' ));
-$inputdataarr['dtype']   = trim(HyItems::arrayItem ( $_REQUEST, 'dtype' ));  //删除层级类型id---m主表评论---c字表回复
 
 
-$inputdataarr['code']  = trim(HyItems::arrayItem ( $_REQUEST, 'code' ));  //微信请求code
+$inputdataarr['touserid']  = trim(HyItems::arrayItem ( $_POST, 'touserid' ));
+$inputdataarr['cid']      = trim(HyItems::arrayItem ( $_POST, 'cid' ));
+$inputdataarr['dtype']   = trim(HyItems::arrayItem ( $_POST, 'dtype' ));  //删除层级类型id---m主表评论---c字表回复
 
 
-// $inputdataarr['mobile']          = trim(HyItems::arrayItem ( $_REQUEST, 'mobile' ));          //联系人手机号
-// $inputdataarr['shouhuoren']      = trim(HyItems::arrayItem ( $_REQUEST, 'shouhuoren' ));      //收货人
-// $inputdataarr['province']        = trim(HyItems::arrayItem ( $_REQUEST, 'province' ));        //省份
-// $inputdataarr['city']            = trim(HyItems::arrayItem ( $_REQUEST, 'city' ));            //城市
-// $inputdataarr['address']         = trim(HyItems::arrayItem ( $_REQUEST, 'address' ));         //详细的收货地址
-// $inputdataarr['zipcode']         = trim(HyItems::arrayItem ( $_REQUEST, 'zipcode' ));         //邮政编码
-// $inputdataarr['is_default']      = trim(HyItems::arrayItem ( $_REQUEST, 'is_default' ));      //是否设置为默认地址
-// $inputdataarr['address_id']     = trim(HyItems::arrayItem ( $_REQUEST, 'address_id' ));      //收货地址的唯一标识编号
+$inputdataarr['code']  = trim(HyItems::arrayItem ( $_POST, 'code' ));  //微信请求code
+
+
+// $inputdataarr['mobile']          = trim(HyItems::arrayItem ( $_POST, 'mobile' ));          //联系人手机号
+// $inputdataarr['shouhuoren']      = trim(HyItems::arrayItem ( $_POST, 'shouhuoren' ));      //收货人
+// $inputdataarr['province']        = trim(HyItems::arrayItem ( $_POST, 'province' ));        //省份
+// $inputdataarr['city']            = trim(HyItems::arrayItem ( $_POST, 'city' ));            //城市
+// $inputdataarr['address']         = trim(HyItems::arrayItem ( $_POST, 'address' ));         //详细的收货地址
+// $inputdataarr['zipcode']         = trim(HyItems::arrayItem ( $_POST, 'zipcode' ));         //邮政编码
+// $inputdataarr['is_default']      = trim(HyItems::arrayItem ( $_POST, 'is_default' ));      //是否设置为默认地址
+// $inputdataarr['address_id']     = trim(HyItems::arrayItem ( $_POST, 'address_id' ));      //收货地址的唯一标识编号
 
 
 
@@ -194,6 +204,28 @@ if(1==$inputdataarr['usertype']) {
 if('请输入手机号'==$inputdataarr['phone']) {
 	$inputdataarr['phone'] = '';
 }
+if('undefined'==$inputdataarr['classify1'] || 'null'==$inputdataarr['classify1']) {
+	$inputdataarr['classify1'] = '';
+}
+if('undefined'==$inputdataarr['classify2'] || 'null'==$inputdataarr['classify2']) {
+	$inputdataarr['classify2'] = '';
+}
+if('undefined'==$inputdataarr['classify3'] || 'null'==$inputdataarr['classify3']) {
+	$inputdataarr['classify3'] = '';
+}
+if('undefined'==$inputdataarr['classify4'] || 'null'==$inputdataarr['classify4']) {
+	$inputdataarr['classify4'] = '';
+}
+if('undefined'==$inputdataarr['msgjihe'] || 'null'==$inputdataarr['msgjihe']) {
+	$inputdataarr['msgjihe'] = '';
+}
+if('undefined'==$inputdataarr['searchstr'] || 'null'==$inputdataarr['searchstr']) {
+	$inputdataarr['searchstr'] = '';
+}
+if('undefined'==$inputdataarr['classtype'] || 'null'==$inputdataarr['classtype']) {
+	$inputdataarr['classtype'] = '';
+}
+
 
 
 

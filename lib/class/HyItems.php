@@ -10,18 +10,71 @@
 class HyItems {
 	
 	
+	public static function hy_getfiletype($filepathname='') {
+		if(''==$filepathname || !file_exists($filepathname)) {
+			return false;
+		}else {
+			$path     = dirname($filepathname).'/';
+			$basename = pathinfo($filepathname, PATHINFO_FILENAME);
+			$extname  = pathinfo($filepathname, PATHINFO_EXTENSION);
+			
+			$file = fopen($filepathname, "rb");
+			$bin = fread($file, 2); //只读2字节
+			fclose($file);
+			$strInfo = @unpack("C2chars", $bin);
+			$typeCode = intval($strInfo['chars1'].$strInfo['chars2']);
+			$fileType = 'jpg';
+			switch ($typeCode)
+			{
+				case 7790:
+					$fileType = 'exe';
+					break;
+				case 7784:
+					$fileType = 'midi';
+					break;
+				case 8297:
+					$fileType = 'rar';
+					break;
+				case 8075:
+					$fileType = 'zip';
+					break;
+				case 255216:
+					$fileType = 'jpg';
+					break;
+				case 7173:
+					$fileType = 'gif';
+					break;
+				case 6677:
+					$fileType = 'bmp';
+					break;
+				case 13780:
+					$fileType = 'png';
+					break;
+				default:
+					$fileType = 'jpg'; //unknown
+			}
+			$newpathname = $path.$basename.'.'.$fileType;
+			
+			return $newpathname;
+		}
+		
+	}
+	
+	
 	/**
 	 * 将图片以自定义品质，另存为JPG格式,将会删除源图片
-	 * @param string $filename 图片名称，包含路径
+	 * @param string $filepathname 图片名称，包含路径
 	 * @param int    $quality  图片品质，0到100，默认90，100为最高品质
 	 */
 	public static function hy_resave2jpg($filepathname='', $quality = 85) {
 		if(''==$filepathname) {
 			return false;
 		}else {
+			
 			$path     = dirname($filepathname).'/';
 			$basename = pathinfo($filepathname, PATHINFO_FILENAME);
 			$extname  = pathinfo($filepathname, PATHINFO_EXTENSION);
+			$im = null;
 			switch($extname) {
 				case 'jpg':
 					$im = imagecreatefromjpeg($filepathname);
@@ -34,12 +87,18 @@ class HyItems {
 					break;
 			}
 			$newpathname = $path.$basename.'.jpg';
-			imagejpeg($im, $newpathname, $quality);
-			if(in_array($extname, array('png','gif'))) {
-				@unlink($filepathname);
-			}
+			$r = imagejpeg($im, $newpathname, $quality);
 			imagedestroy($im);
-			return $newpathname;
+			if($r) {
+				if(in_array($extname, array('png','gif'))) {
+					@unlink($filepathname);
+				}
+				
+				return $newpathname;
+			}else {
+				return false;
+			}
+			
 		}
 		
 	}

@@ -99,6 +99,17 @@ class HySix1016 extends HySix{
 		$list_getvideo['picpinglunlist'] = $list_getvideopinglun;
 		
 		
+		//判断该用户是否收藏了该条数据
+		$sql_pan = "select id from sixty_video_shoucang where dataid='".$this->nowid."' and userid='".parent::__get('userid')."' and type='1' order by id desc limit 1";
+		$list_pan = parent::__get('HyDb')->get_one($sql_pan);
+		if($list_pan>0) {
+			$list_getvideo['shoucangflag'] = '1';
+		}else {
+			$list_getvideo['shoucangflag'] = '2';
+		}
+		
+		
+		
 		$echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$list_getvideo);
 		parent::hy_log_str_add($echojsonstr."\n");
 		echo $echojsonstr;

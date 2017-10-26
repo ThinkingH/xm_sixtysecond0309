@@ -32,17 +32,6 @@ class HySix1020 extends HySix{
 	
 	
 	public function controller_edituserimage(){
-		//图片保存的位置$this->imgpath
-		$filepath = $this->tmpimgpath;
-		
-		if(!file_exists($filepath)) {
-			mkdir( $filepath, 0777, true );
-		}
-		//图片文件名
-		$filename = parent::__get('userid').'_'.date('ymdHis').mt_rand(100,999).'.'.$this->houzhui;
-		//文件的路径
-		$filepathname = $filepath.$filename;
-		
 		
 		if(!is_numeric($this->dataid)) {
 			$echojsonstr = HyItems::echo2clientjson('100','视频id字段不能为空');
@@ -82,9 +71,26 @@ class HySix1020 extends HySix{
 			}
 			
 			
+			if(!file_exists($this->tmpimgpath)) {
+				mkdir( $filepath, 0777, true );
+			}
+			//图片文件名
+			$filename = parent::__get('userid').'_'.date('ymdHis').mt_rand(100,999).'.'.$this->houzhui;
+			//文件的路径
+			$filepathname = $this->tmpimgpath.$filename;
+			
 			//把图片的编码解码为图片，存到对应的路径中
 			file_put_contents($filepathname,base64_decode($this->imgdata));
-			if(false===parent::func_isImage($filepathname)) {
+			
+			//图片后缀重组
+			$cz_filepathname = HyItems::hy_getfiletype($filepathname);
+			//对文件进行重命名，修改后缀
+			rename($filepathname,$cz_filepathname);
+			
+			
+			
+			
+			if(false===parent::func_isImage($cz_filepathname)) {
 				//解析失败
 				$echojsonstr = HyItems::echo2clientjson('100','图片解析失败，请重试');
 				parent::hy_log_str_add($echojsonstr."\n");
@@ -93,8 +99,8 @@ class HySix1020 extends HySix{
 			}else {
 				
 				//上传到七牛云
-				$r = parent::upload_qiniu('sixty-imgpinglun',$filepathname,$filename);
-				unlink($filepathname); //删除文件
+				$r = parent::upload_qiniu('sixty-imgpinglun',$cz_filepathname,$filename);
+				unlink($cz_filepathname); //删除文件
 				
 				if(false===$r) {
 					//上传失败

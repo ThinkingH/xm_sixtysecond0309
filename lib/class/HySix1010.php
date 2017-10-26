@@ -18,7 +18,7 @@ class HySix1010 extends HySix{
 		//头像的存放位置
 		$this->tmpimgpath = TMPPICPATH;
 		
-		$this->houzhui          = isset($input_data['houzhui']) ? $input_data['houzhui'] : '' ;
+		$this->houzhui          = isset($input_data['houzhui']) ? $input_data['houzhui'] : 'jpg' ;
 		$this->imgdata          = isset($input_data['imgdata']) ? $input_data['imgdata'] : '' ;
 		
 	}
@@ -26,24 +26,24 @@ class HySix1010 extends HySix{
 	
 	public function controller_edituserimage(){
 		
-		//图片保存的位置$this->imgpath
-		$filepath = $this->tmpimgpath;
-		
-		if(!file_exists($filepath)) {
+		if(!file_exists($this->tmpimgpath)) {
 			mkdir( $filepath, 0777, true );
 		}
 		//图片文件名
 		$filename = parent::__get('userid').'_touxiangimg.'.$this->houzhui;
-		$filepathname = $filepath.$filename;
-		//图片后缀重组
-		$filepathname = HyItems::hy_getfiletype($filepathname);
+		$filepathname = $this->tmpimgpath.$filename;
 		
 		//把图片的编码解码为图片，存到对应的路径中
 		file_put_contents($filepathname,base64_decode($this->imgdata));
 		
-		if(false===parent::func_isImage($filepathname)) {
+		//图片后缀重组
+		$cz_filepathname = HyItems::hy_getfiletype($filepathname);
+		//对文件进行重命名，修改后缀
+		rename($filepathname,$cz_filepathname);
+		
+		if(false===parent::func_isImage($cz_filepathname)) {
 			//解析失败
-			@unlink($filepathname); //删除文件
+			@unlink($cz_filepathname); //删除文件
 			$echojsonstr = HyItems::echo2clientjson('100','图片解析失败，请重试');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
@@ -51,18 +51,18 @@ class HySix1010 extends HySix{
 		}else {
 			
 			//上传到七牛云之前先进行图片格式转换，统一使用jpg格式
-			$r = HyItems::hy_resave2jpg($filepathname);
+			$r = HyItems::hy_resave2jpg($cz_filepathname);
 			if($r!==false) {
 				parent::hy_log_str_add($r."\n");
-				$filepathname = $r;
+				$cz_filepathname = $r;
 			}
 			
 			
 			//上传到七牛云
-			$r = parent::upload_qiniu('sixty-user',$filepathname,pathinfo($filepathname,PATHINFO_BASENAME),'yes');
+			$r = parent::upload_qiniu('sixty-user',$cz_filepathname,pathinfo($cz_filepathname,PATHINFO_BASENAME),'yes');
 			
 			if(false===$r) {
-				@unlink($filepathname); //删除文件
+				@unlink($cz_filepathname); //删除文件
 				//上传失败
 				$echojsonstr = HyItems::echo2clientjson('100','头像上传失败');
 				parent::hy_log_str_add($echojsonstr."\n");
@@ -71,8 +71,8 @@ class HySix1010 extends HySix{
 				return false;
 				
 			}else {
-				@unlink($filepathname); //删除文件
-				$filebasename  = pathinfo($filepathname, PATHINFO_BASENAME);
+				@unlink($cz_filepathname); //删除文件
+				$filebasename  = pathinfo($cz_filepathname, PATHINFO_BASENAME);
 				$sql_touxiang  = "update sixty_user set touxiang = '".$filebasename."' where id='".parent::__get('userid')."'";
 				$list_touxiang = parent::__get('HyDb')->execute($sql_touxiang);
 				

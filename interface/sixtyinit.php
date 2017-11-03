@@ -64,6 +64,7 @@ $inputdataarr['pagesize']        = trim(HyItems::arrayItem ( $_POST, 'pagesize' 
 $inputdataarr['page']            = trim(HyItems::arrayItem ( $_POST, 'page' ));            //数据请求对应页数
 
 $inputdataarr['yijian']          = trim(HyItems::arrayItem ( $_POST, 'yijian' ));       //用户反馈的意见内容
+$inputdataarr['contact']          = trim(HyItems::arrayItem ( $_POST, 'contact' ));       //联系方式-建议
 $inputdataarr['sex']             = trim(HyItems::arrayItem ( $_POST, 'sex' ));           //性别，1男，2女，3保密
 $inputdataarr['birthday']        = trim(HyItems::arrayItem ( $_POST, 'birthday' ));      //生日
 $inputdataarr['nickname']        = trim(HyItems::arrayItem ( $_POST, 'nickname' ));       //用户昵称

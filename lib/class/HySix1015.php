@@ -45,37 +45,27 @@ class HySix1015 extends HySix{
 	
 	protected function controller_exec1(){
 		
-		$sql_where = "";
+		$sql_where = " where flag='1' ";
 		
 		if(''===(string)$this->searchstr) {
 			if(''!==(string)$this->classify1) {
-				$sql_where .= " classify1='".$this->classify1."' and ";
+				$sql_where .= " and classify1='".$this->classify1."' ";
 			}
 			if(''!==(string)$this->classify2) {
-				$sql_where .= " classify2='".$this->classify2."' and ";
+				$sql_where .= " and classify2='".$this->classify2."' ";
 			}
 			if(''!==(string)$this->classify3) {
-				$sql_where .= " classify3='".$this->classify3."' and ";
+				$sql_where .= " and classify3='".$this->classify3."' ";
 			}
 			if(''!==(string)$this->classify4) {
-				$sql_where .= " classify4='".$this->classify4."' and ";
+				$sql_where .= " and classify4='".$this->classify4."' ";
 			}
 			if(''!==(string)$this->msgjihe) {
-				$sql_where .= " msgjihe='".$this->msgjihe."' and ";
+				$sql_where .= " and msgjihe='".$this->msgjihe."' ";
 			}
-			
-			if($sql_where!='') {
-				$sql_where = " where ".rtrim($sql_where,'and ');
-			}
-			
 			
 		}else {
-			$sql_where .= " biaoti like '%".$this->searchstr."%' or ";
-			$sql_where .= " biaotichild like '%".$this->searchstr."%' or ";
-			
-			if($sql_where!='') {
-				$sql_where = " where ".rtrim($sql_where,'or ');
-			}
+			$sql_where .= " and ( biaoti like '%".$this->searchstr."%' or biaotichild like '%".$this->searchstr."%' ) ";
 			
 		}
 		
@@ -89,13 +79,14 @@ class HySix1015 extends HySix{
 		$pagemsg = $pagearr['pagemsg'];
 		$pagelimit = $pagearr['pagelimit'];
 		
-		$sql_getvideo = "select id,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,jieshao,create_datetime 
+		$sql_getvideo = "select id,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,shicaititle,jieshao,create_datetime 
 						from sixty_video
 						".$sql_where." order by id desc ".$pagelimit;
 // 		echo $sql_getvideo;
 		$list_getvideo =  parent::__get('HyDb')->get_all($sql_getvideo);
 		
 		foreach($list_getvideo as $keygv => $valgv) {
+			//$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);
 			$list_getvideo[$keygv]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$list_getvideo[$keygv]['showimg'],$this->imgwidth,$this->imgheight);
 		}
 		

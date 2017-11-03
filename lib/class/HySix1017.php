@@ -39,6 +39,7 @@ class HySix1017 extends HySix{
 		$echosearch  = '';
 		$echocontent = '';
 		$echoallcon  = 0;
+		$echofenlei  = array();
 		
 		$guize = '1';
 		
@@ -51,9 +52,10 @@ class HySix1017 extends HySix{
 		
 		
 		if(''==$this->classtype || 'classify'==$this->classtype) {
-			$sql_getclassify1 = "select classify1,count(*) as con from sixty_video group by classify1 order by classify1";
+			$sql_getclassify1 = "select classify1,count(*) as con from sixty_video where flag='1' group by classify1 order by classify1";
 			$list_getclassify1  = parent::__get('HyDb')->get_all($sql_getclassify1);
 			foreach($list_getclassify1 as $valgc) {
+				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify1']) {
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify1']]['childname'])?$hy_classifynamearr[$valgc['classify1']]['childname']:'';
 					$tmparr = array(
@@ -63,18 +65,19 @@ class HySix1017 extends HySix{
 							'count' => $valgc['con'],
 					);
 					array_push($echoarr,$tmparr);
-					$echoallcon += $valgc['con'];
 				}
 			}
+			
 		}else if('classify1'==$this->classtype) {
-			$sqlwhere = '';
+			$sqlwhere = " where flag='1' ";
 			if(''!==(string)$this->searchstr) {
 				$echosearch = $this->searchstr;
-				$sqlwhere = " where classify1='".$this->searchstr."'";
+				$sqlwhere .= " and classify1='".$this->searchstr."' ";
 			}
 			$sql_getclassify2 = "select classify2,count(*) as con from sixty_video ".$sqlwhere." group by classify2 order by classify2";
 			$list_getclassify2  = parent::__get('HyDb')->get_all($sql_getclassify2);
 			foreach($list_getclassify2 as $valgc) {
+				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify2']) {
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify2']]['childname'])?$hy_classifynamearr[$valgc['classify2']]['childname']:'';
 					$tmparr = array(
@@ -84,18 +87,25 @@ class HySix1017 extends HySix{
 							'count' => $valgc['con'],
 					);
 					array_push($echoarr,$tmparr);
-					$echoallcon += $valgc['con'];
 				}
 			}
+			
+			$sql_fenlei = "select classify1 from sixty_video where flag='1' and classify1='".$this->searchstr."' order by id desc limit 1";
+			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
+			if(count($list_fenlei)>0) {
+				$echofenlei['classify1'] = $list_fenlei['classify1'];
+			}
+			
 		}else if('classify2'==$this->classtype) {
-			$sqlwhere = '';
+			$sqlwhere = " where flag='1' ";
 			if(''!==(string)$this->searchstr) {
 				$echosearch = $this->searchstr;
-				$sqlwhere = " where classify2='".$this->searchstr."'";
+				$sqlwhere .= " and classify2='".$this->searchstr."' ";
 			}
 			$sql_getclassify3 = "select classify3,count(*) as con from sixty_video ".$sqlwhere." group by classify3 order by classify3";
 			$list_getclassify3  = parent::__get('HyDb')->get_all($sql_getclassify3);
 			foreach($list_getclassify3 as $valgc) {
+				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify3']) {
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify3']]['childname'])?$hy_classifynamearr[$valgc['classify3']]['childname']:'';
 					$tmparr = array(
@@ -105,18 +115,27 @@ class HySix1017 extends HySix{
 							'count' => $valgc['con'],
 					);
 					array_push($echoarr,$tmparr);
-					$echoallcon += $valgc['con'];
 				}
 			}
+			
+			$sql_fenlei = "select classify1,classify2 from sixty_video where flag='1' and classify2='".$this->searchstr."' order by id desc limit 1";
+			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
+			if(count($list_fenlei)>0) {
+				$echofenlei['classify1'] = $list_fenlei['classify1'];
+				$echofenlei['classify2'] = $list_fenlei['classify2'];
+			}
+			
 		}else if('classify3'==$this->classtype) {
-			$sqlwhere = '';
+			$sqlwhere = " where flag='1' ";
 			if(''!==(string)$this->searchstr) {
 				$echosearch = $this->searchstr;
-				$sqlwhere = " where classify3='".$this->searchstr."'";
+				$sqlwhere .= " and classify3='".$this->searchstr."'";
 			}
 			$sql_getclassify4 = "select classify4,count(*) as con from sixty_video ".$sqlwhere." group by classify4 order by classify4";
+			//echo $sql_getclassify4;
 			$list_getclassify4  = parent::__get('HyDb')->get_all($sql_getclassify4);
 			foreach($list_getclassify4 as $valgc) {
+				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify4']) {
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify4']]['childname'])?$hy_classifynamearr[$valgc['classify4']]['childname']:'';
 					$tmparr = array(
@@ -126,9 +145,19 @@ class HySix1017 extends HySix{
 							'count' => $valgc['con'],
 					);
 					array_push($echoarr,$tmparr);
-					$echoallcon += $valgc['con'];
+					
 				}
 			}
+			
+			$sql_fenlei = "select classify1,classify2,classify3 from sixty_video where flag='1' and classify3='".$this->searchstr."' order by id desc limit 1";
+			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
+			if(count($list_fenlei)>0) {
+				$echofenlei['classify1'] = $list_fenlei['classify1'];
+				$echofenlei['classify2'] = $list_fenlei['classify2'];
+				$echofenlei['classify3'] = $list_fenlei['classify3'];
+			}
+			
+			
 		}else if('msgjihe'==$this->classtype) {
 			if(''!==(string)$this->searchstr) {
 				$guize = '2'; //指定输出规则格式，特辑单独格式
@@ -148,7 +177,7 @@ class HySix1017 extends HySix{
 				$pagelimit = $pagearr['pagelimit'];
 				
 				
-				$sql_jihedata = "select id,name,showimg,content from sixty_jihemsg order by id desc ".$pagelimit;
+				$sql_jihedata = "select id,name,showimg,content,create_datetime from sixty_jihemsg order by id desc ".$pagelimit;
 				$list_jihedata = parent::__get('HyDb')->get_all($sql_jihedata);
 				$jihearr = array();
 				$jiheidarr = array();
@@ -161,7 +190,7 @@ class HySix1017 extends HySix{
 					$jiheinstr = ' and msgjihe in ('.implode(',',$jiheidarr).') ';
 				}
 				
-				$sql_getmsgjihe = "select msgjihe,count(*) as con from sixty_video where msgjihe>0 ".$jiheinstr." group by msgjihe order by msgjihe";
+				$sql_getmsgjihe = "select msgjihe,count(*) as con from sixty_video where flag='1' and msgjihe>0 ".$jiheinstr." group by msgjihe order by msgjihe";
 				
 				$list_getmsgjihe  = parent::__get('HyDb')->get_all($sql_getmsgjihe);
 				foreach($list_getmsgjihe as $valgc) {
@@ -170,6 +199,7 @@ class HySix1017 extends HySix{
 						$showimg = HyItems::hy_qiniuimgurl('sixty-jihemsg',$showimg,$this->imgwidth,$this->imgheight,true);
 						$content = isset($jihearr[$valgc['msgjihe']]['content'])?$jihearr[$valgc['msgjihe']]['content']:'';
 						$tmpname = isset($jihearr[$valgc['msgjihe']]['name'])?$jihearr[$valgc['msgjihe']]['name']:'';
+						$tmpcreate_datetime = isset($jihearr[$valgc['msgjihe']]['create_datetime'])?$jihearr[$valgc['msgjihe']]['create_datetime']:'';
 						
 						$tmparr = array(
 								'type' => 'msgjihe',
@@ -177,6 +207,8 @@ class HySix1017 extends HySix{
 								'name' => $tmpname,
 								'content' => $content,
 								'showimg' => $showimg,
+								'create_datetime' => $tmpcreate_datetime,
+								'create_date' => date('Y年m月d日',strtotime($tmpcreate_datetime)),
 								'count' => $valgc['con'],
 						);
 						array_push($echoarr,$tmparr);
@@ -204,6 +236,7 @@ class HySix1017 extends HySix{
 			$retarr['name'] = $echosearch;
 			$retarr['content'] = $echocontent;
 			$retarr['count'] = $echoallcon;
+			$retarr['fenlei'] = $echofenlei;
 		}
 		
 		$echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$retarr);

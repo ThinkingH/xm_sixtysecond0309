@@ -2,8 +2,8 @@
 
 /*** 极光推送  通知推送*****/
 class JiPush{
-	protected $app_key = '8ee5d160f81b066ad2993a2d';        //待发送的应用程序(appKey)，只能填一个。
-	protected $master_secret ='9b3c3f792ae690f0fa66fdb9';    //主密码
+	protected $app_key = 'd1b2b47af477612cd4d12048';        //待发送的应用程序(appKey)，只能填一个。
+	protected $master_secret ='f1421b8da3749230b38171e0';    //主密码
 	protected $url = "https://api.jpush.cn/v3/push";      //推送的地址
 
 

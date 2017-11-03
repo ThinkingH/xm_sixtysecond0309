@@ -154,7 +154,9 @@ class HyItems {
 		}
 		
 	}
-	public static function hy_qiniubuckeyurl($bucketname='',$dataname='') {
+	
+	//七牛云bucket存储内容获取
+	public static function hy_qiniubucketurl($bucketname='',$dataname='') {
 		$returnurl = '';
 		$qiniubucketarr = json_decode(QINIUBUCKETSTR,true);
 		$bucketurl = isset($qiniubucketarr[$bucketname])?$qiniubucketarr[$bucketname]:'';

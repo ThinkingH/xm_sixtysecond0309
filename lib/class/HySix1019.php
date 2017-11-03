@@ -10,6 +10,7 @@ class HySix1019 extends HySix{
 	private $imgwidth;
 	private $imgheight;
 	private $nowid;
+	private $typeid;
 	
 	
 	//数据的初始化
@@ -22,8 +23,18 @@ class HySix1019 extends HySix{
 		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'200';
 		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'200';
 		$this->nowid     = isset($input_data['nowid'])?$input_data['nowid']:'0';
+		$this->typeid     = isset($input_data['typeid'])?$input_data['typeid']:'1';
 		if(!is_numeric($this->nowid)) {
-			$this->nowid  =0;
+			$this->nowid = 0;
+		}
+		if(!is_numeric($this->typeid)) {
+			$this->typeid = 1;
+		}
+		if(''==$this->imgwidth) {
+			$this->imgwidth = 210;
+		}
+		if(''==$this->imgheight) {
+			$this->imgheight = 210;
 		}
 	}
 	
@@ -53,6 +64,52 @@ class HySix1019 extends HySix{
 		$retarr = parent::func_retsqluserdata($useridarr,50,50);
 // 		print_r($retarr);
 		foreach($list_getvideopinglun as $keygp => $valgp) {
+			$list_getvideopinglun[$keygp]['create_date'] = date('Y年m月d日',strtotime($list_getvideopinglun[$keygp]['create_datetime']));
+			$list_getvideopinglun[$keygp]['showimg'] = HyItems::hy_qiniuimgurl('sixty-imgpinglun',$list_getvideopinglun[$keygp]['showimg'],$this->imgwidth,$this->imgheight);
+			$list_getvideopinglun[$keygp]['nickname'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'nickname');
+			$list_getvideopinglun[$keygp]['touxiang'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'touxiang');
+		}
+		
+		
+		$rarr = array(
+				'pagemsg' => $pagemsg,
+				'list' => $list_getvideopinglun,
+		);
+		
+		$echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$rarr);
+		parent::hy_log_str_add($echojsonstr."\n");
+		echo $echojsonstr;
+		return true;
+		
+		
+	}
+	
+	protected function controller_exec2(){
+		
+		$sql_where = " where userid='".parent::__get('userid')."' and type='2' ";
+		
+		$sql_count_getvideopinglun = "select count(*) as con from sixty_video_pinglun ".$sql_where;
+		$list_count_getvideopinglun = parent::__get('HyDb')->get_one($sql_count_getvideopinglun);
+		$pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_getvideopinglun);
+		$pagemsg = $pagearr['pagemsg'];
+		$pagelimit = $pagearr['pagelimit'];
+		
+		$sql_getvideopinglun = "select id,userid,content,showimg,create_datetime 
+								from sixty_video_pinglun
+								".$sql_where." order by dianzan desc,id desc ".$pagelimit;
+		
+		$list_getvideopinglun =  parent::__get('HyDb')->get_all($sql_getvideopinglun);
+		
+		$useridarr = array();
+		foreach($list_getvideopinglun as $valgp) {
+			if(!in_array($valgp['userid'], $useridarr)) {
+				array_push($useridarr, $valgp['userid']);
+			}
+		}
+		$retarr = parent::func_retsqluserdata($useridarr,50,50);
+// 		print_r($retarr);
+		foreach($list_getvideopinglun as $keygp => $valgp) {
+			$list_getvideopinglun[$keygp]['create_date'] = date('Y年m月d日',strtotime($list_getvideopinglun[$keygp]['create_datetime']));
 			$list_getvideopinglun[$keygp]['showimg'] = HyItems::hy_qiniuimgurl('sixty-imgpinglun',$list_getvideopinglun[$keygp]['showimg'],$this->imgwidth,$this->imgheight);
 			$list_getvideopinglun[$keygp]['nickname'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'nickname');
 			$list_getvideopinglun[$keygp]['touxiang'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'touxiang');
@@ -76,9 +133,14 @@ class HySix1019 extends HySix{
 	//用户信息--操作入口
 	public function controller_init(){
 		
+		if($this->typeid==2) {
+			//获取该用户的所有投稿
+			$this->controller_exec2();
+		}else {
+			//获取视频id下的所有投稿
+			$this->controller_exec1();
+		}
 		
-		//用户信息获取入口
-		$this->controller_exec1();
 	
 		return true;
 	

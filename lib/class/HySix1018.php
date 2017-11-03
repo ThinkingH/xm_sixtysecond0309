@@ -58,6 +58,7 @@ class HySix1018 extends HySix{
 		}
 		$retarr = parent::func_retsqluserdata($useridarr,50,50);
 		foreach($list_getvideopinglun as $keygp => $valgp) {
+			$list_getvideopinglun[$keygp]['create_date'] = date('Y年m月d日',strtotime($list_getvideopinglun[$keygp]['create_datetime']));
 			$list_getvideopinglun[$keygp]['nickname'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'nickname');
 			$list_getvideopinglun[$keygp]['touxiang'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'touxiang');
 		}

@@ -83,7 +83,7 @@ class HyDb {
 		$this->rs = $this->mysqli->query($sql);
 		if(!$this->rs) {
 			echo "<p>error: ".$this->mysqli->error."</p>";
-			
+// 			echo $sql;
 			return false;
 		}else {
 			return $this->rs;

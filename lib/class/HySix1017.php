@@ -237,6 +237,9 @@ class HySix1017 extends HySix{
 			$retarr['content'] = $echocontent;
 			$retarr['count'] = $echoallcon;
 			$retarr['fenlei'] = $echofenlei;
+			if(isset($pagemsg)) {
+				$retarr['pagemsg'] = $pagemsg;
+			}
 		}
 		
 		$echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$retarr);

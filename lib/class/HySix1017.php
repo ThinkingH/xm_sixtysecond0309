@@ -93,7 +93,7 @@ class HySix1017 extends HySix{
 			$sql_fenlei = "select classify1 from sixty_video where flag='1' and classify1='".$this->searchstr."' order by id desc limit 1";
 			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
 			if(count($list_fenlei)>0) {
-				$echofenlei['classify1'] = $list_fenlei['classify1'];
+				$echofenlei['classifys'] = array($list_fenlei['classify1']);
 			}
 			
 		}else if('classify2'==$this->classtype) {
@@ -121,8 +121,7 @@ class HySix1017 extends HySix{
 			$sql_fenlei = "select classify1,classify2 from sixty_video where flag='1' and classify2='".$this->searchstr."' order by id desc limit 1";
 			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
 			if(count($list_fenlei)>0) {
-				$echofenlei['classify1'] = $list_fenlei['classify1'];
-				$echofenlei['classify2'] = $list_fenlei['classify2'];
+				$echofenlei['classifys'] = array($list_fenlei['classify1'],$list_fenlei['classify2']);
 			}
 			
 		}else if('classify3'==$this->classtype) {
@@ -152,9 +151,7 @@ class HySix1017 extends HySix{
 			$sql_fenlei = "select classify1,classify2,classify3 from sixty_video where flag='1' and classify3='".$this->searchstr."' order by id desc limit 1";
 			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);
 			if(count($list_fenlei)>0) {
-				$echofenlei['classify1'] = $list_fenlei['classify1'];
-				$echofenlei['classify2'] = $list_fenlei['classify2'];
-				$echofenlei['classify3'] = $list_fenlei['classify3'];
+				$echofenlei['classifys'] = array($list_fenlei['classify1'],$list_fenlei['classify2'],$list_fenlei['classify3']);
 			}
 			
 			

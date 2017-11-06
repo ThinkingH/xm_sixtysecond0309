@@ -76,6 +76,8 @@ $inputdataarr['imgdata']        = trim(HyItems::arrayItem ( $_POST, 'imgdata' ))
 
 $inputdataarr['jiguangid']        = trim(HyItems::arrayItem ( $_POST, 'jiguangid' ));             //极光id
 $inputdataarr['openid']           = trim(HyItems::arrayItem ( $_POST, 'openid' ));             //微信的openid
+$inputdataarr['qqid']           = trim(HyItems::arrayItem ( $_POST, 'qqid' ));             //QQ的qqid
+$inputdataarr['weiboid']           = trim(HyItems::arrayItem ( $_POST, 'weiboid' ));             //微博的weiboid
 $inputdataarr['dataid']           = trim(HyItems::arrayItem ( $_POST, 'dataid' ));             //视频id字段
 $inputdataarr['nowid']       = trim(HyItems::arrayItem ( $_POST, 'nowid' ));  //请求的数据id字段
 $inputdataarr['typeid']       = trim(HyItems::arrayItem ( $_POST, 'typeid' ));  //类型id字段（1文字评论，2图片评论）

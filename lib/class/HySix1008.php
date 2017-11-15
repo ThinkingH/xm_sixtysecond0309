@@ -24,7 +24,7 @@ class HySix1008 extends HySix{
 		$list_config = parent::__get('HyDb')->get_all($sql_config);
 		
 		if(count($list_config)<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','信息获取失败');
+			$echojsonstr = HyItems::echo2clientjson('101','信息获取失败');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -32,9 +32,14 @@ class HySix1008 extends HySix{
 		}else {
 			$configarr = array();
 			foreach($list_config as $valc) {
-				$configarr[$valc['name']] = array($valc['key1'],$valc['val1']);
+				$configarr[$valc['name']] = $valc['val1'];
+// 				$configarr[$valc['name']] = array(
+// 						'key' => $valc['key1'],
+// 						'val' => $valc['val1'],
+						
+// 				);
 			}
-			$echojsonstr = HyItems::echo2clientjson('100','信息获取成功',array($configarr));
+			$echojsonstr = HyItems::echo2clientjson('100','信息获取成功',$configarr);
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return true;

@@ -24,7 +24,7 @@ class HySix1001 extends HySix{
 		//判断手机号是否正确
 		$rightphone = parent::hy_yunyingshangcheck($this->phone);
 		if($rightphone===false){
-			$echojsonstr = HyItems::echo2clientjson('100','手机号码格式不正确');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号码格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -58,14 +58,14 @@ class HySix1001 extends HySix{
 	
 		//判断手机号是否为空
 		if($this->phone==''){
-			$echojsonstr = HyItems::echo2clientjson('100','手机号不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		
 		if( !is_numeric($this->phone) || strlen($this->phone)!='11'){
-			$echojsonstr = HyItems::echo2clientjson('100','手机号码格式不正确');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号码格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

@@ -34,13 +34,13 @@ class HySix1020 extends HySix{
 	public function controller_edituserimage(){
 		
 		if(!is_numeric($this->dataid)) {
-			$echojsonstr = HyItems::echo2clientjson('100','视频id字段不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','视频id字段不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		if(''==$this->contentdata) {
-			$echojsonstr = HyItems::echo2clientjson('100','评论内容不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','评论内容不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -49,7 +49,7 @@ class HySix1020 extends HySix{
 		$sql_videopan = "select id from sixty_video where id='".$this->dataid."'";
 		$list_videopan = parent::__get('HyDb')->get_one($sql_videopan);
 		if($list_videopan<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','指定的评论视频id不存在');
+			$echojsonstr = HyItems::echo2clientjson('101','指定的评论视频id不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -58,13 +58,13 @@ class HySix1020 extends HySix{
 		if(2==$this->typeid) {
 			//图片评论
 			if(''==$this->imgdata) {
-				$echojsonstr = HyItems::echo2clientjson('100','上传图片不能为空');
+				$echojsonstr = HyItems::echo2clientjson('101','上传图片不能为空');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
 			}
 			if(''==$this->houzhui) {
-				$echojsonstr = HyItems::echo2clientjson('100','图片后缀不能为空');
+				$echojsonstr = HyItems::echo2clientjson('101','图片后缀不能为空');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
@@ -92,7 +92,7 @@ class HySix1020 extends HySix{
 			
 			if(false===parent::func_isImage($cz_filepathname)) {
 				//解析失败
-				$echojsonstr = HyItems::echo2clientjson('100','图片解析失败，请重试');
+				$echojsonstr = HyItems::echo2clientjson('101','图片解析失败，请重试');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
@@ -104,7 +104,7 @@ class HySix1020 extends HySix{
 				
 				if(false===$r) {
 					//上传失败
-					$echojsonstr = HyItems::echo2clientjson('100','图片上传失败');
+					$echojsonstr = HyItems::echo2clientjson('101','图片上传失败');
 					parent::hy_log_str_add($echojsonstr."\n");
 					echo $echojsonstr;
 					return false;
@@ -121,7 +121,7 @@ class HySix1020 extends HySix{
 			$showimg = '';
 			
 		}else {
-			$echojsonstr = HyItems::echo2clientjson('100','评论类型错误');
+			$echojsonstr = HyItems::echo2clientjson('101','评论类型错误');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

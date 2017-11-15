@@ -46,7 +46,7 @@ class HySix1022 extends HySix{
 		$pagemsg = $pagearr['pagemsg'];
 		$pagelimit = $pagearr['pagelimit'];
 		
-		$sql_getvideoshoucang = "select id,userid,dataid,create_datetime 
+		$sql_getvideoshoucang = "select id,userid,dataid,dataid as vid,create_datetime 
 								from sixty_video_shoucang
 								".$sql_where." order by id desc ".$pagelimit;
 		//echo $sql_getvideoshoucang;

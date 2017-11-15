@@ -10,6 +10,41 @@
 class HyItems {
 	
 	
+	public static function hy_qiniu_urlstoptime($url='',$addtime=3600) {
+		//七牛提供的 key
+		$key = '1111111111111111111111111111111111111';
+		
+		if(''==$url) {
+			return false;
+		}
+		// 对URL进行解析
+		$parse = parse_url($url);
+		
+		// 设置有效时间为一个小时
+		$time = time()+3600;
+		
+		// 对有效时间进行16进制转换
+		$T=dechex($time);
+		
+		// 按规定格式拼接字符串
+		$S=$key.$parse['path'].$T;
+		
+		// 进行md5加密并进行小写转换
+		$sign =strtolower(md5($S));
+		
+		// 拼接URL
+		if(isset($parse['query'])){
+			$url = $url.'&sign='.$sign.'&t='.$T;
+			
+		} else {
+			$url = $url.'?sign='.$sign.'&t='.$T;
+		}
+		
+		// 返回
+		return $url;
+			
+	}
+	
 	public static function hy_getfiletype($filepathname='') {
 		if(''==$filepathname || !file_exists($filepathname)) {
 			return false;
@@ -125,6 +160,8 @@ class HyItems {
 					}
 					$returnimgurl .= '/q/75';
 					$returnimgurl .= '|imageslim';
+					//增加时间戳
+					$returnimgurl = HyItems::hy_qiniu_urlstoptime($returnimgurl,7200);
 				}
 				return $returnimgurl;
 			}
@@ -148,6 +185,8 @@ class HyItems {
 					}
 					$returnimgurl .= '/q/75';
 					$returnimgurl .= '|imageslim';
+					//增加时间戳
+					$returnimgurl = HyItems::hy_qiniu_urlstoptime($returnimgurl,7200);
 				}
 			}
 			return $returnimgurl;
@@ -165,6 +204,8 @@ class HyItems {
 				$returnurl = $dataname;
 			}else {
 				$returnurl = $bucketurl.$dataname;
+				//增加时间戳
+				$returnurl = HyItems::hy_qiniu_urlstoptime($returnurl,3600);
 			}
 		}
 		return $returnurl;
@@ -831,7 +872,8 @@ class HyItems {
 	//客户端数据输出格式化
 	public static function echo2clientjson($code='',$msg='',$data=array()) {
 		$jsonarr = array();
-		$jsonarr['code'] = (string)$code;
+		$jsonarr['code'] = '100';
+		$jsonarr['sucerr'] = (string)$code;
 		$jsonarr['msg']  = (string)$msg;
 		$jsonarr['data'] = $data;
 		

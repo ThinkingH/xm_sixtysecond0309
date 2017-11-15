@@ -74,7 +74,7 @@ class HySix1017 extends HySix{
 				$echosearch = $this->searchstr;
 				$sqlwhere .= " and classify1='".$this->searchstr."' ";
 			}
-			$sql_getclassify2 = "select classify2,count(*) as con from sixty_video ".$sqlwhere." group by classify2 order by classify2";
+			$sql_getclassify2 = "select classify2,count(*) as con from sixty_video ".$sqlwhere." group by classify2 order by field(classify2,'网红菜','甜品','面包与披萨','其他') ";
 			$list_getclassify2  = parent::__get('HyDb')->get_all($sql_getclassify2);
 			foreach($list_getclassify2 as $valgc) {
 				$echoallcon += $valgc['con'];
@@ -89,6 +89,8 @@ class HySix1017 extends HySix{
 					array_push($echoarr,$tmparr);
 				}
 			}
+			
+			
 			
 			$sql_fenlei = "select classify1 from sixty_video where flag='1' and classify1='".$this->searchstr."' order by id desc limit 1";
 			$list_fenlei = parent::__get('HyDb')->get_row($sql_fenlei);

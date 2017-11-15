@@ -36,14 +36,14 @@ class HySix1014 extends HySix{
 		
 		preg_match($pattern16, $this->box, $matches_box);
 		if(empty($matches_box)) {
-			$echojsonstr = HyItems::echo2clientjson('100','数据添加失败，box必须由字母数字下划线构成，长度16位以内');
+			$echojsonstr = HyItems::echo2clientjson('101','数据添加失败，box必须由字母数字下划线构成，长度16位以内');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		preg_match($pattern32, $this->key1, $matches_key1);
 		if(empty($matches_key1)) {
-			$echojsonstr = HyItems::echo2clientjson('100','数据添加失败，key1必须由字母数字下划线构成，长度32位以内');
+			$echojsonstr = HyItems::echo2clientjson('101','数据添加失败，key1必须由字母数字下划线构成，长度32位以内');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -76,7 +76,7 @@ class HySix1014 extends HySix{
 		$list_haspan = parent::__get('HyDb')->get_one($sql_haspan);
 		
 		if($list_haspan<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','数据添加更新失败，系统错误');
+			$echojsonstr = HyItems::echo2clientjson('101','数据添加更新失败，系统错误');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

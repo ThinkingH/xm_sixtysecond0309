@@ -43,7 +43,7 @@ class HySix1016 extends HySix{
 		$list_getvideo =  parent::__get('HyDb')->get_row($sql_getvideo);
 		
 		if(count($list_getvideo)<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','数据获取失败');
+			$echojsonstr = HyItems::echo2clientjson('101','数据获取失败');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

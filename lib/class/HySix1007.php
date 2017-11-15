@@ -56,7 +56,7 @@ class HySix1007 extends HySix{
 			
 			
 		}else{
-			$echojsonstr = HyItems::echo2clientjson('100','修改参数为空，无法执行修改');
+			$echojsonstr = HyItems::echo2clientjson('101','修改参数为空，无法执行修改');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return true;

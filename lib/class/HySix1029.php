@@ -51,14 +51,16 @@ class HySix1029 extends HySix{
 		
 		if(count($list_getvideopinglun)>0) {
 			$thevid = $list_getvideopinglun['vid'];
-			$sql_getvideoimg = "select showimg from sixty_video where id='".$thevid."' order by id desc limit 1";
-			$list_getvideoimg = parent::__get('HyDb')->get_one($sql_getvideoimg);
-			
+			$sql_getvideoimg = "select biaoti,showimg from sixty_video where id='".$thevid."' order by id desc limit 1";
+			$list_getvideoimg = parent::__get('HyDb')->get_row($sql_getvideoimg);
+			$thebiaoti = $list_getvideoimg['biaoti'];
+			$theshowimg = $list_getvideoimg['showimg'];
 			
 			$retarr = parent::func_retsqluserdata(array(parent::__get('userid')),50,50);
 			
+			$list_getvideopinglun['biaoti'] = $thebiaoti;
 			$list_getvideopinglun['create_date'] = date('Y年m月d日',strtotime($list_getvideopinglun['create_datetime']));
-			$list_getvideopinglun['videoimg']  = HyItems::hy_qiniuimgurl('sixty-videoimage',$list_getvideoimg,50,50);
+			$list_getvideopinglun['videoimg']  = HyItems::hy_qiniuimgurl('sixty-videoimage',$theshowimg,50,50);
 			$list_getvideopinglun['pinglunimg']  = HyItems::hy_qiniuimgurl('sixty-imgpinglun',$list_getvideopinglun['showimg'],$this->imgwidth,$this->imgheight);
 			$list_getvideopinglun['nickname'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun['userid'],'nickname');
 			$list_getvideopinglun['touxiang'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun['userid'],'touxiang');

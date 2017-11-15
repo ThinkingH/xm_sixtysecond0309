@@ -44,7 +44,7 @@ class HySix1010 extends HySix{
 		if(false===parent::func_isImage($cz_filepathname)) {
 			//解析失败
 			@unlink($cz_filepathname); //删除文件
-			$echojsonstr = HyItems::echo2clientjson('100','图片解析失败，请重试');
+			$echojsonstr = HyItems::echo2clientjson('101','图片解析失败，请重试');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -64,7 +64,7 @@ class HySix1010 extends HySix{
 			if(false===$r) {
 				@unlink($cz_filepathname); //删除文件
 				//上传失败
-				$echojsonstr = HyItems::echo2clientjson('100','头像上传失败');
+				$echojsonstr = HyItems::echo2clientjson('101','头像上传失败');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				

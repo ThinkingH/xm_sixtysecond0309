@@ -62,7 +62,7 @@ class HySix1006 extends HySix{
 	
 		//判断yijian提交的参数是否为空
 		if($this->yijian==''){
-			$echojsonstr = HyItems::echo2clientjson('100','反馈意见不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','反馈意见不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -70,7 +70,7 @@ class HySix1006 extends HySix{
 		}
 		//判断contact提交的参数是否为空
 		if($this->contact==''){
-			$echojsonstr = HyItems::echo2clientjson('100','联系方式不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','联系方式不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

@@ -35,7 +35,7 @@ class HySix1003 extends HySix{
 			return true;
 			
 		}else{
-			$echojsonstr = HyItems::echo2clientjson('100','极光关联id不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','极光关联id不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

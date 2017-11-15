@@ -40,7 +40,7 @@ class HySix1026 extends HySix {
 						'userid' => $list_getuser['id'],
 						'userkey'=> $list_getuser['tokenkey'],
 				);
-				$echojsonstr = HyItems::echo2clientjson('100','登录成功',array($userarr));
+				$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return true;
@@ -64,13 +64,13 @@ class HySix1026 extends HySix {
 						'userid' => $useridlist['id'],
 						'userkey'=> $useridlist['tokenkey'],
 				);
-				$echojsonstr = HyItems::echo2clientjson('100','登录成功',array($userarr));
+				$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return true;
 				
 			}else{
-				$echojsonstr = HyItems::echo2clientjson('100','登录失败，系统错误');
+				$echojsonstr = HyItems::echo2clientjson('101','登录失败，系统错误');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;

@@ -29,7 +29,7 @@ class HySix1013 extends HySix{
 			}
 		}
 		if(count($delidarr)<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','数据删除失败，id数据为空');
+			$echojsonstr = HyItems::echo2clientjson('101','数据删除失败，id数据为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -38,7 +38,7 @@ class HySix1013 extends HySix{
 			$list_getdata = parent::__get('HyDb')->get_one($sql_getdata);
 			
 			if($list_getdata<=0) {
-				$echojsonstr = HyItems::echo2clientjson('100','数据删除失败，未找到符合删除数据');
+				$echojsonstr = HyItems::echo2clientjson('101','数据删除失败，未找到符合删除数据');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;

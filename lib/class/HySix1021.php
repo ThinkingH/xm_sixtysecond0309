@@ -31,19 +31,19 @@ class HySix1021 extends HySix{
 		
 		//判断评论id是否存在
 		if(!is_numeric($this->dataid)) {
-			$echojsonstr = HyItems::echo2clientjson('100','视频id字段不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','视频id字段不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		if(2!=$this->typeid && 1!=$this->typeid) {
-			$echojsonstr = HyItems::echo2clientjson('100','评论类型不存在');
+			$echojsonstr = HyItems::echo2clientjson('101','评论类型不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		if(!is_numeric($this->delid)) {
-			$echojsonstr = HyItems::echo2clientjson('100','删除评论id格式不正确');
+			$echojsonstr = HyItems::echo2clientjson('101','删除评论id格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
@@ -54,7 +54,7 @@ class HySix1021 extends HySix{
 		$list_pan = parent::__get('HyDb')->get_row($sql_pan);
 		
 		if(count($list_pan)<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','删除评论数据不存在');
+			$echojsonstr = HyItems::echo2clientjson('101','删除评论数据不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

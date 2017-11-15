@@ -32,15 +32,21 @@ class HySix1002 extends HySix{
 		
 		if($r===true) {
 			//判断该用户是否注册过
-			$userregistersql  = "select id,tokenkey from sixty_user where phone='".$this->phone."'";
+			$userregistersql  = "select id,tokenkey,nickname,touxiang from sixty_user where phone='".$this->phone."'";
 			$userregisterlist = parent::__get('HyDb')->get_row($userregistersql);
 			
 			if(count($userregisterlist)>0){
 				$userarr = array(
 						'userid' => $userregisterlist['id'],
 						'userkey'=> $userregisterlist['tokenkey'],
-						'firstlogin'=> 'no',
+						
 				);
+				if(''==$userregisterlist['nickname'] || ''==$userregisterlist['touxiang']) {
+					$userarr['firstlogin'] = 'yes';
+				}else {
+					$userarr['firstlogin'] = 'no';
+				}
+				
 				$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
@@ -72,7 +78,7 @@ class HySix1002 extends HySix{
 					return true;
 					
 				}else{
-					$echojsonstr = HyItems::echo2clientjson('100','登录失败，系统错误');
+					$echojsonstr = HyItems::echo2clientjson('101','登录失败，系统错误');
 					parent::hy_log_str_add($echojsonstr."\n");
 					echo $echojsonstr;
 					return false;
@@ -95,28 +101,28 @@ class HySix1002 extends HySix{
 	
 		//判断手机号是否为空
 		if($this->phone==''){
-			$echojsonstr = HyItems::echo2clientjson('100','手机号不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		
 		if( !is_numeric($this->phone) || strlen($this->phone)!='11'){
-			$echojsonstr = HyItems::echo2clientjson('100','手机号码格式不正确');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号码格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		//判断手机号是否为空
 		if($this->vcode==''){
-			$echojsonstr = HyItems::echo2clientjson('100','验证码不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','验证码不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
 		
 		if( !is_numeric($this->vcode) || strlen($this->vcode)<4){
-			$echojsonstr = HyItems::echo2clientjson('100','验证码格式不正确');
+			$echojsonstr = HyItems::echo2clientjson('101','验证码格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

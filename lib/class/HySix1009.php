@@ -17,17 +17,17 @@ class HySix1009 extends HySix{
 	
 	public function controller_shengji(){
 		
-		$sql_version = "select * from sixty_versioninfo where flag='1' and system='".parent::__get('system')."' order by id desc limit 1";
+		$sql_version = "select id,system,version,uptype,apk_url,updesc,update_date from sixty_versioninfo where flag='1' and system='".parent::__get('system')."' order by id desc limit 1";
 		$list_version = parent::__get('HyDb')->get_row($sql_version);
 		
 		if(count($list_version)<=0) {
-			$echojsonstr = HyItems::echo2clientjson('100','版本信息获取失败');
+			$echojsonstr = HyItems::echo2clientjson('101','版本信息获取失败');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}else {
 			
-			$echojsonstr = HyItems::echo2clientjson('100','版本信息获取成功',array($list_version));
+			$echojsonstr = HyItems::echo2clientjson('100','版本信息获取成功',$list_version);
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;

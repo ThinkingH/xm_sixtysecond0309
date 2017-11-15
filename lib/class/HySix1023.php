@@ -39,7 +39,7 @@ class HySix1023 extends HySix{
 			$sql_videopan = "select id from sixty_video where id='".$this->nowid."' and userid='".parent::__get('userid')."' and type='1' order by id desc limit 1";
 			$list_videopan = parent::__get('HyDb')->get_one($sql_pan);
 			if($list_videopan>0 && $list_pan<=0) {
-				$echojsonstr = HyItems::echo2clientjson('100','收藏失败');
+				$echojsonstr = HyItems::echo2clientjson('101','收藏失败');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
@@ -55,7 +55,7 @@ class HySix1023 extends HySix{
 			
 		}else {
 			if($list_pan<=0) {
-				$echojsonstr = HyItems::echo2clientjson('100','取消收藏失败');
+				$echojsonstr = HyItems::echo2clientjson('101','取消收藏失败');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;

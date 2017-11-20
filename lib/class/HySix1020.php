@@ -133,7 +133,7 @@ class HySix1020 extends HySix{
 						'".$this->contentdata."','".$showimg."','".date('Y-m-d H:i:s')."')";
 		$list_insert = parent::__get('HyDb')->execute($sql_insert);
 		
-		$echojsonstr = HyItems::echo2clientjson('100','评论发布能成功');
+		$echojsonstr = HyItems::echo2clientjson('100','发布成功');
 		parent::hy_log_str_add($echojsonstr."\n");
 		echo $echojsonstr;
 		return false;

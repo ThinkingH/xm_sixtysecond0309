@@ -30,7 +30,8 @@ class HySix1010 extends HySix{
 			mkdir( $filepath, 0777, true );
 		}
 		//图片文件名
-		$filename = parent::__get('userid').'_touxiangimg.'.$this->houzhui;
+		//$filename = parent::__get('userid').'_touxiangimg.'.$this->houzhui;
+		$filename = parent::__get('userid').'_'.date('ymdHis').mt_rand(100,999).'.'.$this->houzhui;
 		$filepathname = $this->tmpimgpath.$filename;
 		
 		//把图片的编码解码为图片，存到对应的路径中
@@ -75,6 +76,13 @@ class HySix1010 extends HySix{
 				$filebasename  = pathinfo($cz_filepathname, PATHINFO_BASENAME);
 				$sql_touxiang  = "update sixty_user set touxiang = '".$filebasename."' where id='".parent::__get('userid')."'";
 				$list_touxiang = parent::__get('HyDb')->execute($sql_touxiang);
+				
+				//获取原图片名称，并删除七牛云旧图片
+				$olduserlistarr = parent::__get('userlistdata');
+				$oldtouxiangname = isset($olduserlistarr['touxiang'])?$olduserlistarr['touxiang']:'';
+				if(''!=$oldtouxiangname) {
+					$r = parent::delete_qiniu('sixty-user',$oldtouxiangname);
+				}
 				
 				$echojsonstr = HyItems::echo2clientjson('100','头像上传成功');
 				parent::hy_log_str_add($echojsonstr."\n");

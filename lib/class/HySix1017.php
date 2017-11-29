@@ -25,10 +25,10 @@ class HySix1017 extends HySix{
 		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
 		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 200;
+			$this->imgwidth = 300;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 200;
+			$this->imgheight = 300;
 		}
 	}
 	
@@ -53,7 +53,8 @@ class HySix1017 extends HySix{
 		
 		if(''==$this->classtype || 'classify'==$this->classtype) {
 			$sql_getclassify1 = "select classify1,count(*) as con from sixty_video where flag='1' group by classify1 order by classify1";
-			$list_getclassify1  = parent::__get('HyDb')->get_all($sql_getclassify1);
+			$list_getclassify1 = parent::func_runtime_sql_data($sql_getclassify1);
+			
 			foreach($list_getclassify1 as $valgc) {
 				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify1']) {
@@ -74,8 +75,9 @@ class HySix1017 extends HySix{
 				$echosearch = $this->searchstr;
 				$sqlwhere .= " and classify1='".$this->searchstr."' ";
 			}
-			$sql_getclassify2 = "select classify2,count(*) as con from sixty_video ".$sqlwhere." group by classify2 order by field(classify2,'网红菜','甜品','面包与披萨','其他') ";
-			$list_getclassify2  = parent::__get('HyDb')->get_all($sql_getclassify2);
+			$sql_getclassify2 = "select classify2,count(*) as con from sixty_video ".$sqlwhere." group by classify2 order by field(classify2,'网红菜','甜品','西式','其他','小贴士') ";
+			$list_getclassify2 = parent::func_runtime_sql_data($sql_getclassify2);
+			
 			foreach($list_getclassify2 as $valgc) {
 				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify2']) {
@@ -104,8 +106,11 @@ class HySix1017 extends HySix{
 				$echosearch = $this->searchstr;
 				$sqlwhere .= " and classify2='".$this->searchstr."' ";
 			}
+			
 			$sql_getclassify3 = "select classify3,count(*) as con from sixty_video ".$sqlwhere." group by classify3 order by classify3";
-			$list_getclassify3  = parent::__get('HyDb')->get_all($sql_getclassify3);
+			$list_getclassify3 = parent::func_runtime_sql_data($sql_getclassify3);
+			
+			
 			foreach($list_getclassify3 as $valgc) {
 				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify3']) {
@@ -133,8 +138,8 @@ class HySix1017 extends HySix{
 				$sqlwhere .= " and classify3='".$this->searchstr."'";
 			}
 			$sql_getclassify4 = "select classify4,count(*) as con from sixty_video ".$sqlwhere." group by classify4 order by classify4";
-			//echo $sql_getclassify4;
-			$list_getclassify4  = parent::__get('HyDb')->get_all($sql_getclassify4);
+			$list_getclassify4 = parent::func_runtime_sql_data($sql_getclassify4);
+			
 			foreach($list_getclassify4 as $valgc) {
 				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify4']) {
@@ -161,23 +166,26 @@ class HySix1017 extends HySix{
 			if(''!==(string)$this->searchstr) {
 				$guize = '2'; //指定输出规则格式，特辑单独格式
 				
-				$sql_getonemsg = "select * from sixty_jihemsg where id='".$this->searchstr."'";
+				$sql_getonemsg = "select * from sixty_jihemsg where id='".$this->searchstr."' and flag='1' ";
 				$list_getonemsg = parent::__get('HyDb')->get_row($sql_getonemsg);
 				$echoarr = $list_getonemsg;
 				$echoarr['showimg'] = HyItems::hy_qiniuimgurl('sixty-jihemsg',$echoarr['showimg'],$this->imgwidth,$this->imgheight,true);
 				
 			}else {
 				
-				$sql_count_jihedata = "select count(*) as con from sixty_jihemsg ";
+				$sql_count_jihedata = "select count(*) as con from sixty_jihemsg where flag='1' ";
 				//echo $sql_count_getvideo;
-				$list_count_jihedata = parent::__get('HyDb')->get_one($sql_count_jihedata);
+				//$list_count_jihedataarr = parent::__get('HyDb')->get_all($sql_count_jihedata);
+				$list_count_jihedataarr = parent::func_runtime_sql_data($sql_count_jihedata);
+				$list_count_jihedata = isset($list_count_jihedataarr[0]['con'])?$list_count_jihedataarr[0]['con']:'0';
 				$pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_jihedata);
 				$pagemsg = $pagearr['pagemsg'];
 				$pagelimit = $pagearr['pagelimit'];
 				
 				
-				$sql_jihedata = "select id,name,showimg,content,create_datetime from sixty_jihemsg order by id desc ".$pagelimit;
-				$list_jihedata = parent::__get('HyDb')->get_all($sql_jihedata);
+				$sql_jihedata = "select id,name,showimg,content,create_datetime from sixty_jihemsg where flag='1' order by orderby desc,id desc ".$pagelimit;
+				//$list_jihedata = parent::__get('HyDb')->get_all($sql_jihedata);
+				$list_jihedata = parent::func_runtime_sql_data($sql_jihedata);
 				$jihearr = array();
 				$jiheidarr = array();
 				foreach($list_jihedata as $valj) {
@@ -190,8 +198,8 @@ class HySix1017 extends HySix{
 				}
 				
 				$sql_getmsgjihe = "select msgjihe,count(*) as con from sixty_video where flag='1' and msgjihe>0 ".$jiheinstr." group by msgjihe order by msgjihe";
+				$list_getmsgjihe = parent::func_runtime_sql_data($sql_getmsgjihe);
 				
-				$list_getmsgjihe  = parent::__get('HyDb')->get_all($sql_getmsgjihe);
 				foreach($list_getmsgjihe as $valgc) {
 					if(''!=$valgc['msgjihe']) {
 						$showimg = isset($jihearr[$valgc['msgjihe']]['showimg'])?$jihearr[$valgc['msgjihe']]['showimg']:'';

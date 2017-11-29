@@ -702,6 +702,38 @@ class HySix{
 	
 	
 	
+	
+	//sql语句查询缓存输出
+	protected function func_runtime_sql_data($selectsql='') {
+		$list = array();
+		$selectsql = trim($selectsql);
+		$tmp_sql_md5str = md5($selectsql);
+		$tmpsqlfilepathname = TMPSQLPATH.$tmp_sql_md5str;
+		if(file_exists($tmpsqlfilepathname)) {
+			//获取文件上次修改更新时间
+			$lastuptime = filemtime($tmpsqlfilepathname);
+			if((time()-$lastuptime)<TMPSQLTIME) {
+				//直接使用缓存数据
+				$list = json_decode(file_get_contents($tmpsqlfilepathname),true);
+			}else {
+				$list  = $this->HyDb->get_all($selectsql);
+				if(is_array($list)) {
+					file_put_contents($tmpsqlfilepathname, json_encode($list));
+				}
+			}
+		}else {
+			$list = $this->HyDb->get_all($selectsql);
+			if(is_array($list)) {
+				file_put_contents($tmpsqlfilepathname, json_encode($list));
+			}
+		}
+		return $list;
+	}
+	
+	
+	
+	
+	
 	/**
 	 * 日志变量数据追加，即将子类的日志变量数据追加到父类的日志变量数据中
 	 */

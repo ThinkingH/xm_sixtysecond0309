@@ -16,10 +16,10 @@ class HySix1028 extends HySix{
 		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
 		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 200;
+			$this->imgwidth = 300;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 200;
+			$this->imgheight = 300;
 		}
 		
 	}

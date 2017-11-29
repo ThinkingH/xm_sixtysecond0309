@@ -18,10 +18,10 @@ class HySix1016 extends HySix{
 		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
 		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 200;
+			$this->imgwidth = 300;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 200;
+			$this->imgheight = 300;
 		}
 		if(!is_numeric($this->nowid)) {
 			$this->nowid = 0;
@@ -53,7 +53,8 @@ class HySix1016 extends HySix{
 			$list_getvideo['videourl'] = HyItems::hy_qiniubucketurl('sixty-video',$list_getvideo['videosavename']);
 			
 			$sql_getbuzhou = "select buzhouid,buzhoucontent from sixty_video_buzhou where vid='".$this->nowid."' order by id asc";
-			$list_getbuzhou = parent::__get('HyDb')->get_all($sql_getbuzhou);
+			//$list_getbuzhou = parent::__get('HyDb')->get_all($sql_getbuzhou);
+			$list_getbuzhou = parent::func_runtime_sql_data($sql_getbuzhou);
 			if(count($list_getbuzhou)<=0) {
 				$list_getvideo['buzhouarr'] = array();
 			}else {
@@ -62,7 +63,8 @@ class HySix1016 extends HySix{
 			
 			
 			$sql_getcailiao = "select name,yongliang from sixty_video_cailiao where vid='".$this->nowid."' order by id asc";
-			$list_getcailiao = parent::__get('HyDb')->get_all($sql_getcailiao);
+			//$list_getcailiao = parent::__get('HyDb')->get_all($sql_getcailiao);
+			$list_getcailiao = parent::func_runtime_sql_data($sql_getcailiao);
 			if(count($list_getcailiao)<=0) {
 				$list_getvideo['cailiaoarr'] = array();
 			}else {

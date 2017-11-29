@@ -21,7 +21,8 @@ class HySix1008 extends HySix{
 		
 		
 		$sql_config = "select id,name,key1,val1 from sixty_config where name='banbenhao' or name='kaipingimg' or name='companyname'";
-		$list_config = parent::__get('HyDb')->get_all($sql_config);
+		//$list_config = parent::__get('HyDb')->get_all($sql_config);
+		$list_config = parent::func_runtime_sql_data($sql_config);
 		
 		if(count($list_config)<=0) {
 			$echojsonstr = HyItems::echo2clientjson('101','信息获取失败');

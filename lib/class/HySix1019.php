@@ -20,8 +20,8 @@ class HySix1019 extends HySix{
 		
 		$this->now_page = isset($input_data['page'])?$input_data['page']:'1';
 		$this->pagesize = isset($input_data['pagesize'])?$input_data['pagesize']:'10';
-		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'200';
-		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'200';
+		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
+		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
 		$this->nowid     = isset($input_data['nowid'])?$input_data['nowid']:'0';
 		$this->typeid     = isset($input_data['typeid'])?$input_data['typeid']:'1';
 		if(!is_numeric($this->nowid)) {
@@ -31,10 +31,10 @@ class HySix1019 extends HySix{
 			$this->typeid = 1;
 		}
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 210;
+			$this->imgwidth = 300;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 210;
+			$this->imgheight = 300;
 		}
 	}
 	

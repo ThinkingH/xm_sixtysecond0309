@@ -158,8 +158,9 @@ class HyItems {
 					if($height!='') {
 						$returnimgurl .= '/h/'.$height;
 					}
-					$returnimgurl .= '/q/75';
-					$returnimgurl .= '|imageslim';
+					//$returnimgurl .= '/format/webp';
+					//$returnimgurl .= '/q/100';
+					//$returnimgurl .= '|imageslim';
 					//增加时间戳
 					$returnimgurl = HyItems::hy_qiniu_urlstoptime($returnimgurl,7200);
 				}
@@ -183,8 +184,9 @@ class HyItems {
 					if($height!='') {
 						$returnimgurl .= '/h/'.$height;
 					}
-					$returnimgurl .= '/q/75';
-					$returnimgurl .= '|imageslim';
+					//$returnimgurl .= '/format/webp';
+					//$returnimgurl .= '/q/100';
+					//$returnimgurl .= '|imageslim';
 					//增加时间戳
 					$returnimgurl = HyItems::hy_qiniu_urlstoptime($returnimgurl,7200);
 				}

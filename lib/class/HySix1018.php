@@ -23,13 +23,13 @@ class HySix1018 extends HySix{
 		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
 		$this->nowid     = isset($input_data['nowid'])?$input_data['nowid']:'0';
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 200;
+			$this->imgwidth = 300;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 200;
+			$this->imgheight = 300;
 		}
 		if(!is_numeric($this->nowid)) {
-			$this->nowid  =0;
+			$this->nowid = 0;
 		}
 	}
 	

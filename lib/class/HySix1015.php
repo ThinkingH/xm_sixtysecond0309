@@ -34,10 +34,10 @@ class HySix1015 extends HySix{
 		$this->msgjihe = isset($input_data['msgjihe'])?$input_data['msgjihe']:'';
 		
 		if(''==$this->imgwidth) {
-			$this->imgwidth = 200;
+			$this->imgwidth = 500;
 		}
 		if(''==$this->imgheight) {
-			$this->imgheight = 200;
+			$this->imgheight = 500;
 		}
 		
 	}
@@ -74,7 +74,10 @@ class HySix1015 extends HySix{
 		
 		$sql_count_getvideo = "select count(*) as con from sixty_video ".$sql_where;
 		//echo $sql_count_getvideo;
-		$list_count_getvideo = parent::__get('HyDb')->get_one($sql_count_getvideo);
+		//$list_count_getvideoarr = parent::__get('HyDb')->get_all($sql_count_getvideo);
+		$list_count_getvideoarr = parent::func_runtime_sql_data($sql_count_getvideo);
+		$list_count_getvideo = isset($list_count_getvideoarr[0]['con'])?$list_count_getvideoarr[0]['con']:'0';
+		
 		$pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_getvideo);
 		$pagemsg = $pagearr['pagemsg'];
 		$pagelimit = $pagearr['pagelimit'];
@@ -83,7 +86,8 @@ class HySix1015 extends HySix{
 						from sixty_video
 						".$sql_where." order by id desc ".$pagelimit;
 // 		echo $sql_getvideo;
-		$list_getvideo =  parent::__get('HyDb')->get_all($sql_getvideo);
+// 		$list_getvideo =  parent::__get('HyDb')->get_all($sql_getvideo);
+		$list_getvideo = parent::func_runtime_sql_data($sql_getvideo);
 		
 		foreach($list_getvideo as $keygv => $valgv) {
 			//$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);

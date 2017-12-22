@@ -22,17 +22,18 @@ class HySix1020 extends HySix{
 		//头像的存放位置
 		$this->tmpimgpath = TMPPICPATH;
 		
-		$this->houzhui          = isset($input_data['houzhui']) ? $input_data['houzhui'] : '' ;
-		$this->imgdata          = isset($input_data['imgdata']) ? $input_data['imgdata'] : '' ;
+		$this->houzhui          = isset($input_data['houzhui']) ? $input_data['houzhui'] : '' ;//上传图片后缀名
+		$this->imgdata          = isset($input_data['imgdata']) ? $input_data['imgdata'] : '' ;//上传图片信息
 		$this->dataid          = isset($input_data['dataid']) ? $input_data['dataid'] : '' ; //视频id字段
 		$this->typeid          = isset($input_data['typeid']) ? $input_data['typeid'] : '' ; //类型id字段（1文字评论，2图片评论）
-		$this->contentdata   = isset($input_data['contentdata']) ? $input_data['contentdata'] : '' ;
+		$this->contentdata   = isset($input_data['contentdata']) ? $input_data['contentdata'] : '' ; //文字评论内容
 		
 	}
 	
 	
 	public function controller_edituserimage(){
-		
+
+	    //判断提交信息
 		if(!is_numeric($this->dataid)) {
 			$echojsonstr = HyItems::echo2clientjson('101','视频id字段不能为空');
 			parent::hy_log_str_add($echojsonstr."\n");
@@ -45,32 +46,35 @@ class HySix1020 extends HySix{
 			echo $echojsonstr;
 			return false;
 		}
-		//查询视频id确认是否存在
+
+		//根据ID查询视频信息
 		$sql_videopan = "select id from sixty_video where id='".$this->dataid."'";
 		$list_videopan = parent::__get('HyDb')->get_one($sql_videopan);
-		if($list_videopan<=0) {
+		if($list_videopan<=0) {//查询结果为空
 			$echojsonstr = HyItems::echo2clientjson('101','指定的评论视频id不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
-		
-		if(2==$this->typeid) {
-			//图片评论
-			if(''==$this->imgdata) {
+
+		//判断评论类型
+		if(2==$this->typeid) {//图片评论
+
+			if(''==$this->imgdata) {//上传图片信息为空
 				$echojsonstr = HyItems::echo2clientjson('101','上传图片不能为空');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
 			}
-			if(''==$this->houzhui) {
+			if(''==$this->houzhui) {//上传后缀名为空
 				$echojsonstr = HyItems::echo2clientjson('101','图片后缀不能为空');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
 			}
 			
-			
+
+			//判断临时文件夹是否存在
 			if(!file_exists($this->tmpimgpath)) {
 				mkdir( $filepath, 0777, true );
 			}
@@ -89,7 +93,7 @@ class HySix1020 extends HySix{
 			
 			
 			
-			
+			//解析图片
 			if(false===parent::func_isImage($cz_filepathname)) {
 				//解析失败
 				$echojsonstr = HyItems::echo2clientjson('101','图片解析失败，请重试');
@@ -121,18 +125,26 @@ class HySix1020 extends HySix{
 			$showimg = '';
 			
 		}else {
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','评论类型错误');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
-		
+
+        //评论内容进行64编码
+        $contentdata = base64_encode($this->contentdata);
+
+
+        //把数据插入评论表
 		$sql_insert  = "insert into sixty_video_pinglun (type,vid,userid,content,
 						showimg,create_datetime) value (
 						'".$this->typeid."','".$this->dataid."','".parent::__get('userid')."',
-						'".$this->contentdata."','".$showimg."','".date('Y-m-d H:i:s')."')";
+						'".$contentdata."','".$showimg."','".date('Y-m-d H:i:s')."')";
 		$list_insert = parent::__get('HyDb')->execute($sql_insert);
-		
+
+
+        //数据转为json，写入日志并输出
 		$echojsonstr = HyItems::echo2clientjson('100','发布成功');
 		parent::hy_log_str_add($echojsonstr."\n");
 		echo $echojsonstr;

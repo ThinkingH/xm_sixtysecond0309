@@ -64,12 +64,14 @@ class HySix1027 extends HySix {
 						'userid' => $useridlist['id'],
 						'userkey'=> $useridlist['tokenkey'],
 				);
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return true;
 				
 			}else{
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('101','登录失败，系统错误');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;

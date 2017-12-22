@@ -31,19 +31,24 @@ class HySix1002 extends HySix{
 		$r = parent::func_vcode_check($type='1',$this->phone,$this->vcode);
 		
 		if($r===true) {
-			//判断该用户是否注册过
+			//数据库中查询用户信息
 			$userregistersql  = "select id,tokenkey,nickname,touxiang from sixty_user where phone='".$this->phone."'";
 			$userregisterlist = parent::__get('HyDb')->get_row($userregistersql);
-			
-			if(count($userregisterlist)>0){
+
+			//判断用户信息查询结果
+			if(count($userregisterlist)>0){//用户信息查询成功
+
+                //用户数据存入输出数组
 				$userarr = array(
 						'userid' => $userregisterlist['id'],
 						'userkey'=> $userregisterlist['tokenkey'],
 						
 				);
-				if(''==$userregisterlist['nickname'] || ''==$userregisterlist['touxiang']) {
+
+				//判断用户昵称和用户头像是否为空，判断用户是否首次登陆
+				if(''==$userregisterlist['nickname'] || ''==$userregisterlist['touxiang']) {//首次登陆
 					$userarr['firstlogin'] = 'yes';
-				}else {
+				}else {//不是首次登陆
 					$userarr['firstlogin'] = 'no';
 				}
 				
@@ -61,23 +66,30 @@ class HySix1002 extends HySix{
 				$userdatasql = "insert into sixty_user (phone,tokenkey,create_datetime)
 									values ('".$this->phone."','".$userkey."','".date('Y-m-d H:i:s')."')";
 				$userdatalist = parent::__get('HyDb')->execute($userdatasql);
-				
+
+				//查询刚刚插入的数据信息
 				$useridsql = "select id,tokenkey from sixty_user where phone='".$this->phone."' order by id desc limit 1";
 				$useridlist = parent::__get('HyDb')->get_row($useridsql);
 				
 				
-				if(count($useridlist)>0){
+				if(count($useridlist)>0){//数据插入成功
+
+                    //数据插入输出数组
 					$userarr = array(
 							'userid' => $useridlist['id'],
 							'userkey'=> $useridlist['tokenkey'],
 							'firstlogin'=> 'yes',
 					);
+
+					//数据转为json，写入日志并输出
 					$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 					parent::hy_log_str_add($echojsonstr."\n");
 					echo $echojsonstr;
 					return true;
 					
-				}else{
+				}else{//数据插入失败
+
+                    //数据转为json，写入日志并输出
 					$echojsonstr = HyItems::echo2clientjson('101','登录失败，系统错误');
 					parent::hy_log_str_add($echojsonstr."\n");
 					echo $echojsonstr;

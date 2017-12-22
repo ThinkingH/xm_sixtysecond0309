@@ -30,25 +30,32 @@ class HySix1014 extends HySix{
 	
 	
 	public function controller_clientexec(){
-		
+
+	    //准备正则匹配条件
 		$pattern16 = '/^[a-zA-Z0-9_-]{1,16}$/';
 		$pattern32 = '/^[a-zA-Z0-9_-]{1,32}$/';
-		
+
+		//进行正则匹配
 		preg_match($pattern16, $this->box, $matches_box);
-		if(empty($matches_box)) {
+		if(empty($matches_box)) {//匹配结果为空
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','数据添加失败，box必须由字母数字下划线构成，长度16位以内');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
+
+		//进行正则匹配
 		preg_match($pattern32, $this->key1, $matches_key1);
-		if(empty($matches_key1)) {
+		if(empty($matches_key1)) {//匹配结果为空
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','数据添加失败，key1必须由字母数字下划线构成，长度32位以内');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
-		
+
+		//进行转为64编码
 		$this->val1 = base64_encode($this->val1);
 		$this->val2 = base64_encode($this->val2);
 		$this->val3 = base64_encode($this->val3);
@@ -74,13 +81,16 @@ class HySix1014 extends HySix{
 		//获取该数据id
 		$sql_haspan = "select id from client_data where userid='".parent::__get('userid')."' and key1='".$this->key1."' order by id desc limit 1";
 		$list_haspan = parent::__get('HyDb')->get_one($sql_haspan);
-		
-		if($list_haspan<=0) {
+
+		//判断是否添加成功
+		if($list_haspan<=0) {//成功
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','数据添加更新失败，系统错误');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
-		}else {
+		}else {//失败
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('100','数据添加成功',array($list_haspan));
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;

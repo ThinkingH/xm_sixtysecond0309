@@ -40,6 +40,8 @@ class HySix1026 extends HySix {
 						'userid' => $list_getuser['id'],
 						'userkey'=> $list_getuser['tokenkey'],
 				);
+
+            //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('100','登录成功',$userarr);
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
@@ -55,11 +57,13 @@ class HySix1026 extends HySix {
 								values ('".$this->qqid."','".$userkey."','".$this->sex."','".$this->nickname."',
 								'".$this->headimgurl."','".parent::__get('create_datetime')."')";
 			$userdatalist = parent::__get('HyDb')->execute($userdatasql);
-			
+
+			//查询刚刚插入的用户数据
 			$useridsql = "select id,tokenkey from sixty_user where qqid='".$this->qqid."' order by id desc limit 1";
 			$useridlist = parent::__get('HyDb')->get_row($useridsql);
-			
-			if(count($useridlist)>0){
+
+
+			if(count($useridlist)>0){//数据查询成功
 				$userarr = array(
 						'userid' => $useridlist['id'],
 						'userkey'=> $useridlist['tokenkey'],
@@ -69,7 +73,7 @@ class HySix1026 extends HySix {
 				echo $echojsonstr;
 				return true;
 				
-			}else{
+			}else{//数据未找到
 				$echojsonstr = HyItems::echo2clientjson('101','登录失败，系统错误');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;

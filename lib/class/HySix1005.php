@@ -16,9 +16,11 @@ class HySix1005 extends HySix{
 	
 	
 	protected function controller_getuserinfo(){
-		
+
+	    //获取用户信息
 		$userlistdata = parent::__get('userlistdata');
-		
+
+		//准备数据校验数组
 		$retarr = array(
 				'id',
 				'phone',
@@ -29,22 +31,33 @@ class HySix1005 extends HySix{
 				'describes',
 				'create_datetime',
 		);
+
+		//新数据接收数组
 		$newuserlist = array();
+
+		//遍历用户信息数组
 		foreach($userlistdata as $keyu => $valu) {
-			if(in_array($keyu, $retarr)) {
+		    //匹配用户信息数组键名是否在校验数组中
+			if(in_array($keyu, $retarr)) {//匹配成功
+                //键值存入新数组
 				$newuserlist[$keyu] = (string)$valu;
 			}
 		}
-		
-		if($newuserlist['touxiang']!='') {
+
+
+		//判断用户头像是否为空
+		if($newuserlist['touxiang']!='') {//头像不为空
+
 			if(substr($newuserlist['touxiang'],0,4)!='http') {
+
 				//拼接七牛云头像链接
 				$newuserlist['touxiang'] = HyItems::hy_qiniuimgurl('sixty-user',$newuserlist['touxiang'],100,100,true);
 			}else {
 				//链接为微信的，不做处理
 			}
 		}
-		
+
+        //数据转为json，写入日志并输出
 		$echojsonstr = HyItems::echo2clientjson('100','信息获取成功',$newuserlist);
 		parent::hy_log_str_add($echojsonstr."\n");
 		echo $echojsonstr;

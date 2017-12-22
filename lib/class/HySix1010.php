@@ -4,8 +4,7 @@
  */
 
 class HySix1010 extends HySix{
-	
-	
+
 	private $tmpimgpath; //图片临时存储
 	private $imgdata;
 	
@@ -25,10 +24,13 @@ class HySix1010 extends HySix{
 	
 	
 	public function controller_edituserimage(){
-		
-		if(!file_exists($this->tmpimgpath)) {
+
+	    //判断文件夹是否存在
+		if(!file_exists($this->tmpimgpath)) {//不存在
+            //创建文件夹
 			mkdir( $filepath, 0777, true );
 		}
+
 		//图片文件名
 		//$filename = parent::__get('userid').'_touxiangimg.'.$this->houzhui;
 		$filename = parent::__get('userid').'_'.date('ymdHis').mt_rand(100,999).'.'.$this->houzhui;
@@ -41,7 +43,8 @@ class HySix1010 extends HySix{
 		$cz_filepathname = HyItems::hy_getfiletype($filepathname);
 		//对文件进行重命名，修改后缀
 		rename($filepathname,$cz_filepathname);
-		
+
+		//判断图片是否解析成功
 		if(false===parent::func_isImage($cz_filepathname)) {
 			//解析失败
 			@unlink($cz_filepathname); //删除文件
@@ -65,6 +68,7 @@ class HySix1010 extends HySix{
 			if(false===$r) {
 				@unlink($cz_filepathname); //删除文件
 				//上传失败
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('101','头像上传失败');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
@@ -83,7 +87,8 @@ class HySix1010 extends HySix{
 				if(''!=$oldtouxiangname) {
 					$r = parent::delete_qiniu('sixty-user',$oldtouxiangname);
 				}
-				
+
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('100','头像上传成功');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;

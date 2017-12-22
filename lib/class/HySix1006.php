@@ -24,11 +24,14 @@ class HySix1006 extends HySix{
 	
 	//操作入口
 	protected function controller_gesuggest(){
-		
+
+	    //获取用户类型
 		$usertype = parent::__get('usertype');
 		if($usertype=='') {
 			$usertype = 0;
 		}
+
+		//获取用户id
 		$userid = parent::__get('userid');
 		if($userid=='') {
 			$userid = 0;
@@ -40,7 +43,8 @@ class HySix1006 extends HySix{
 		$yijian_sql  = "insert into sixty_yijian(type,userid,contact,content,create_datetime) values 
 				      ('".$usertype."','".$userid."','".$this->contact."','".$this->yijian."','".date('Y-m-d H:i:s')."')";
 		$yijian_list = parent::__get('HyDb')->execute($yijian_sql);
-		
+
+        //数据转为json，写入日志并输出
 		$echojsonstr = HyItems::echo2clientjson('100','意见提交成功');
 		parent::hy_log_str_add($echojsonstr."\n");
 		echo $echojsonstr;

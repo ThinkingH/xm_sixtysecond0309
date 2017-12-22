@@ -18,15 +18,17 @@ class HySix1017 extends HySix{
 		//数据初始化
 		parent::__construct($input_data);
 		
-		$this->now_page = isset($input_data['page'])?$input_data['page']:'1';
-		$this->pagesize = isset($input_data['pagesize'])?$input_data['pagesize']:'10';
-		$this->classtype = isset($input_data['classtype'])?trim($input_data['classtype']):'';
-		$this->searchstr = isset($input_data['searchstr'])?trim($input_data['searchstr']):'';
-		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
-		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
+		$this->now_page = isset($input_data['page'])?$input_data['page']:'1'; //当前页码
+		$this->pagesize = isset($input_data['pagesize'])?$input_data['pagesize']:'10'; //显示条数
+		$this->classtype = isset($input_data['classtype'])?trim($input_data['classtype']):'';//分类类型
+		$this->searchstr = isset($input_data['searchstr'])?trim($input_data['searchstr']):'';//搜索关键字
+		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';//图片宽度
+		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';//图片高度
+        //默认图片宽度
 		if(''==$this->imgwidth) {
 			$this->imgwidth = 300;
 		}
+		//默认图片高度
 		if(''==$this->imgheight) {
 			$this->imgheight = 300;
 		}
@@ -42,29 +44,38 @@ class HySix1017 extends HySix{
 		$echofenlei  = array();
 		
 		$guize = '1';
-		
+
 		$hy_classifynamearr = array();
+		//查询分类信息表
 		$sql_getcontent = "select id,name,childname,content from sixty_classifymsg";
 		$list_getcontent = parent::__get('HyDb')->get_all($sql_getcontent);
+		//遍历结果集
 		foreach($list_getcontent as $valgc) {
 			$hy_classifynamearr[$valgc['name']] = $valgc;
 		}
 		
-		
+
+		//判读查询类型是否为空或查询全部分类
 		if(''==$this->classtype || 'classify'==$this->classtype) {
+		    //执行查询
 			$sql_getclassify1 = "select classify1,count(*) as con from sixty_video where flag='1' group by classify1 order by classify1";
 			$list_getclassify1 = parent::func_runtime_sql_data($sql_getclassify1);
-			
+
+			//遍历结果集
 			foreach($list_getclassify1 as $valgc) {
+			    //把分类1视频数目存入输出数组
 				$echoallcon += $valgc['con'];
-				if(''!=$valgc['classify1']) {
+				if(''!=$valgc['classify1']) {//分类1中不为空
+                    //判断分类1中子名称是否存在，不存在给一个默认值空
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify1']]['childname'])?$hy_classifynamearr[$valgc['classify1']]['childname']:'';
+					//拼接分类1数组
 					$tmparr = array(
 							'type' => 'classify1',
 							'name' => $valgc['classify1'],
 							'childname' => $tmpchildname,
 							'count' => $valgc['con'],
 					);
+					//把分类数组放入输出数组
 					array_push($echoarr,$tmparr);
 				}
 			}

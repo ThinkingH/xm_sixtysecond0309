@@ -21,31 +21,44 @@ class HySix1013 extends HySix{
 	public function controller_clientexec(){
 		
 		$delidarr = array();
+		//按逗号把字符串转为数组
 		$delidarr1 = explode(',',$this->delid);
+		//遍历数组
 		foreach($delidarr1 as $val1) {
 			$val1 = trim($val1);
-			if(is_numeric($val1) && $val1>0) {
+			//判断键值是否为数字且数值大约0
+			if(is_numeric($val1) && $val1>0) {//符合条件
+                //把数据压入新数组
 				array_push($delidarr,$val1);
 			}
 		}
-		if(count($delidarr)<=0) {
+
+		//判断数组是否为空
+		if(count($delidarr)<=0) {//数组为空
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','数据删除失败，id数据为空');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
-		}else {
+		}else {//数组不为空
+            //查询数据库
 			$sql_getdata = "select count(id) as con from client_data where userid='".parent::__get('userid')."' and id in (".implode(',',$delidarr).")";
 			$list_getdata = parent::__get('HyDb')->get_one($sql_getdata);
-			
-			if($list_getdata<=0) {
+
+			//判断查询结果是否为空
+			if($list_getdata<=0) {//结果为空
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('101','数据删除失败，未找到符合删除数据');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;
 				return false;
-			}else {
+			}else {//结果不为空
+
+                //执行删除
 				$sql_deletedata = "delete from client_data where userid='".parent::__get('userid')."' and id in (".implode(',',$delidarr).")";
 				parent::__get('HyDb')->execute($sql_deletedata);
-				
+
+                //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('100','数据删除成功，共'.$list_getdata.'条');
 				parent::hy_log_str_add($echojsonstr."\n");
 				echo $echojsonstr;

@@ -63,7 +63,8 @@ class HySix1001 extends HySix{
 			echo $echojsonstr;
 			return false;
 		}
-		
+
+		//判断手机号是否符合符合手机号格式
 		if( !is_numeric($this->phone) || strlen($this->phone)!='11'){
 			$echojsonstr = HyItems::echo2clientjson('101','手机号码格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");

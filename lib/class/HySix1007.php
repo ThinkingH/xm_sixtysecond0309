@@ -25,30 +25,37 @@ class HySix1007 extends HySix{
 	
 	
 	protected function controller_edituserinfo(){
-		
+
+	    //判断性别，生日，昵称， 描述是否为空
 		if($this->sex!='' || $this->birthday!='' || $this->nickname!='' || $this->describes!=''){
-			
+
+		    //sql语句开头
 			$useredit_sql = "update sixty_user set ";
 			
-			if($this->sex!=''){
+			if($this->sex!=''){//性别不为空
 				$useredit_sql .= " sex='".$this->sex."', ";
 			}
-			if($this->birthday!=''){
+			if($this->birthday!=''){//生日不为空
 				$useredit_sql .= " birthday='".$this->birthday."', ";
 			}
-			if($this->nickname!=''){
+			if($this->nickname!=''){//昵称不为空
 				$useredit_sql .= " nickname='".$this->nickname."', ";
 			}
-			if($this->describes!=''){
+			if($this->describes!=''){//描述不为空
 				$useredit_sql .= " describes='".$this->describes."', ";
 			}
-			
+
+			//去掉sql语句结尾处 ,
 			$useredit_sql = rtrim($useredit_sql,', ');
+
+			//拼接sql语句条件
 			$useredit_sql .= " where id='".parent::__get('userid')."' and tokenkey='".parent::__get('userkey')."' ";
-			
+
+			//执行sql语句
 			$useredit_list = parent::__get('HyDb')->execute($useredit_sql);
 			parent::hy_log_str_add($useredit_sql."\n");
-			
+
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('100','信息修改成功');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
@@ -56,6 +63,8 @@ class HySix1007 extends HySix{
 			
 			
 		}else{
+
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','修改参数为空，无法执行修改');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;

@@ -36,12 +36,14 @@ class HySix1021 extends HySix{
 			echo $echojsonstr;
 			return false;
 		}
+		//判读评论类型是否存在
 		if(2!=$this->typeid && 1!=$this->typeid) {
 			$echojsonstr = HyItems::echo2clientjson('101','评论类型不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 		}
+		//判断评论id格式是否正确
 		if(!is_numeric($this->delid)) {
 			$echojsonstr = HyItems::echo2clientjson('101','删除评论id格式不正确');
 			parent::hy_log_str_add($echojsonstr."\n");
@@ -49,11 +51,14 @@ class HySix1021 extends HySix{
 			return false;
 		}
 		
-		
+		//查询评论表数据
 		$sql_pan = "select id,showimg from sixty_video_pinglun where type='".$this->typeid."' and vid='".$this->dataid."' and userid='".parent::__get('userid')."' and id='".$this->delid."'";
 		$list_pan = parent::__get('HyDb')->get_row($sql_pan);
-		
+
+		//判断结果集是否为空
 		if(count($list_pan)<=0) {
+
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','删除评论数据不存在');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
@@ -67,8 +72,9 @@ class HySix1021 extends HySix{
 			//执行图片删除操作
 			$sql_delete = "delete from sixty_video_pinglun where id='".$this->delid."' and userid='".parent::__get('userid')."' and type='".$this->typeid."' and vid='".$this->dataid."'";
 			parent::__get('HyDb')->execute($sql_delete);
-			
-			
+
+
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('100','评论删除成功');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;

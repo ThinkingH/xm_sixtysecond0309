@@ -14,15 +14,19 @@ class HySix1016 extends HySix{
 		//数据初始化
 		parent::__construct($input_data);
 		
-		$this->nowid = isset($input_data['nowid'])?$input_data['nowid']:'0';
-		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:'';
-		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:'';
+		$this->nowid = isset($input_data['nowid'])?$input_data['nowid']:'0';        //视频ID
+		$this->imgwidth = isset($input_data['imgwidth'])?$input_data['imgwidth']:''; //图片宽度
+		$this->imgheight = isset($input_data['imgheight'])?$input_data['imgheight']:''; //图片高度
+
+        //图片宽度默认值
 		if(''==$this->imgwidth) {
 			$this->imgwidth = 300;
 		}
+		//图片高度默认值
 		if(''==$this->imgheight) {
 			$this->imgheight = 300;
 		}
+		//判断视频ID是否为空
 		if(!is_numeric($this->nowid)) {
 			$this->nowid = 0;
 		}
@@ -31,7 +35,8 @@ class HySix1016 extends HySix{
 	
 	
 	protected function controller_exec1(){
-		
+
+	    //根据ID查询视频表数据
 		$sql_getvideo = "select id,classify1,classify2,classify3,classify4,
 						showimg,videosavename,biaoti,biaotichild,jieshao,fenshu,
 						maketime,huafeimoney,tishishuoming,create_datetime 
@@ -39,35 +44,48 @@ class HySix1016 extends HySix{
 						where id='".$this->nowid."' 
 						and flag='1'
 						order by id desc limit 1";
-// 		echo $sql_getvideo;
+
 		$list_getvideo =  parent::__get('HyDb')->get_row($sql_getvideo);
-		
+
+		//判断查询结果是否为空
 		if(count($list_getvideo)<=0) {
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('101','数据获取失败');
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;
 			return false;
 			
 		}else {
+		    //获取七牛云图片地址
 			$list_getvideo['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$list_getvideo['showimg'],$this->imgwidth,$this->imgheight);
+			//获取七牛云视频地址
 			$list_getvideo['videourl'] = HyItems::hy_qiniubucketurl('sixty-video',$list_getvideo['videosavename']);
-			
+
+			//根据视频ID查询视频步骤表
 			$sql_getbuzhou = "select buzhouid,buzhoucontent from sixty_video_buzhou where vid='".$this->nowid."' order by id asc";
 			//$list_getbuzhou = parent::__get('HyDb')->get_all($sql_getbuzhou);
 			$list_getbuzhou = parent::func_runtime_sql_data($sql_getbuzhou);
-			if(count($list_getbuzhou)<=0) {
+
+			//判断查询结果是否为空
+			if(count($list_getbuzhou)<=0) {//结果为空
+                //存入空数组
 				$list_getvideo['buzhouarr'] = array();
-			}else {
+			}else {//结果不为空
+                //把结果存入视频结果集
 				$list_getvideo['buzhouarr'] = $list_getbuzhou;
 			}
 			
-			
+
+			//根据视频ID查询视频食材表
 			$sql_getcailiao = "select name,yongliang from sixty_video_cailiao where vid='".$this->nowid."' order by id asc";
-			//$list_getcailiao = parent::__get('HyDb')->get_all($sql_getcailiao);
 			$list_getcailiao = parent::func_runtime_sql_data($sql_getcailiao);
-			if(count($list_getcailiao)<=0) {
+
+			//判断查询结果是否为空
+			if(count($list_getcailiao)<=0) {//结果为空
+                //存入空数组
 				$list_getvideo['cailiaoarr'] = array();
-			}else {
+			}else {//结果不为空
+                //把结果存入视频结果集
 				$list_getvideo['cailiaoarr'] = $list_getcailiao;
 			}
 			
@@ -93,20 +111,30 @@ class HySix1016 extends HySix{
 			$list_getvideopinglun =  parent::__get('HyDb')->get_all($sql_getvideopinglun);
 			
 			$useridarr = array();
+			//遍历评论结果集
 			foreach($list_getvideopinglun as $valgp) {
 				if(!in_array($valgp['userid'], $useridarr)) {
+				    //把用户id放入用户数组
 					array_push($useridarr, $valgp['userid']);
 				}
 			}
+			//获取用户信息列表
 			$retarr = parent::func_retsqluserdata($useridarr,50,50);
-			// 		print_r($retarr);
+
+			//遍历评论结果集
 			foreach($list_getvideopinglun as $keygp => $valgp) {
 				//$list_getvideopinglun[$keygp]['create_date'] = substr($list_getvideopinglun[$keygp]['create_datetime'],0,10);
+                //存入七牛云图片地址
 				$list_getvideopinglun[$keygp]['showimg']  = HyItems::hy_qiniuimgurl('sixty-imgpinglun',$list_getvideopinglun[$keygp]['showimg'],$this->imgwidth,$this->imgheight);
+				//存入用户昵称
 				$list_getvideopinglun[$keygp]['nickname'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'nickname');
+				//存入用户头像
 				$list_getvideopinglun[$keygp]['touxiang'] = parent::func_userid_datatiqu($retarr,$list_getvideopinglun[$keygp]['userid'],'touxiang');
+				//存入评论内容
+				$list_getvideopinglun[$keygp]['content'] = base64_decode($list_getvideopinglun[$keygp]['content']);
 			}
-			
+
+			//把评论存入视频结果集
 			$list_getvideo['picpinglunlist'] = $list_getvideopinglun;
 			
 			
@@ -118,9 +146,9 @@ class HySix1016 extends HySix{
 			}else {
 				$list_getvideo['shoucangflag'] = '2';
 			}
-			
-			
-			
+
+
+            //数据转为json，写入日志并输出
 			$echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$list_getvideo);
 			parent::hy_log_str_add($echojsonstr."\n");
 			echo $echojsonstr;

@@ -119,6 +119,24 @@ $inputdataarr['dtype']   = trim(HyItems::arrayItem ( $_REQUEST, 'dtype' ));  //�
 $inputdataarr['code']  = trim(HyItems::arrayItem ( $_REQUEST, 'code' ));  //微信请求code
 
 
+$inputdataarr['word']        = trim(HyItems::arrayItem ( $_REQUEST, 'word' )); //食谱步骤文字内容
+$inputdataarr['sort']        = trim(HyItems::arrayItem ( $_REQUEST, 'sort' )); //食谱步骤顺序
+$inputdataarr['cookid']        = trim(HyItems::arrayItem ( $_REQUEST, 'cookid' )); //食谱id
+
+
+$inputdataarr['biaoti']        = trim(HyItems::arrayItem ( $_REQUEST, 'biaoti' )); //食谱标题
+$inputdataarr['abstract']        = trim(HyItems::arrayItem ( $_REQUEST, 'abstract' )); //食谱简介
+$inputdataarr['maketime']        = trim(HyItems::arrayItem ( $_REQUEST, 'maketime' )); //食谱制作时间
+$inputdataarr['money']        = trim(HyItems::arrayItem ( $_REQUEST, 'money' )); //食谱花费
+$inputdataarr['keypoint']        = trim(HyItems::arrayItem ( $_REQUEST, 'keypoint' )); //食谱关键点
+$inputdataarr['cook_cailiao']        = trim(HyItems::arrayItem ( $_REQUEST, 'cook_cailiao' )); //食谱食材
+$inputdataarr['typec']        = trim(HyItems::arrayItem ( $_REQUEST, 'typec' )); //删除类型
+$inputdataarr['update']        = trim(HyItems::arrayItem ( $_REQUEST, 'update' )); //添加类型
+
+$inputdataarr['push_state']        = trim(HyItems::arrayItem ( $_REQUEST, 'push_state' )); //推送状态
+
+
+
 // $inputdataarr['mobile']          = trim(HyItems::arrayItem ( $_REQUEST, 'mobile' ));          //联系人手机号
 // $inputdataarr['shouhuoren']      = trim(HyItems::arrayItem ( $_REQUEST, 'shouhuoren' ));      //收货人
 // $inputdataarr['province']        = trim(HyItems::arrayItem ( $_REQUEST, 'province' ));        //省份

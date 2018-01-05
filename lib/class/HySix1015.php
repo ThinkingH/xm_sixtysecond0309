@@ -96,6 +96,8 @@ class HySix1015 extends HySix{
 // 		$list_getvideo =  parent::__get('HyDb')->get_all($sql_getvideo);
 		$list_getvideo = parent::func_runtime_sql_data($sql_getvideo);
 
+		//查询用户收藏表数据
+
 		//遍历查询结果集
 		foreach($list_getvideo as $keygv => $valgv) {
 			//$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);

@@ -56,7 +56,7 @@ class HySix1022 extends HySix{
 								".$sql_where." order by id desc ".$pagelimit;
 		//echo $sql_getvideoshoucang;
 		$list_getvideoshoucang =  parent::__get('HyDb')->get_all($sql_getvideoshoucang);
-
+//var_dump($list_getvideoshoucang);die;
 		//判断结果集是否为空
 		if(count($list_getvideoshoucang)>0) {
 			$useridarr = array();

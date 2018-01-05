@@ -1,6 +1,6 @@
 <?php
 /**
-视频全局搜索，搜索小贴士表
+视频全局搜索，搜索小贴士表,视频收藏显示
  */
 
 /**
@@ -44,14 +44,21 @@ class HySix1034 extends HySix{
             $this->imgheight = 500;
         }
 
+        if($this->pagesize == ''){
+            $this->pagesize = 10;
+        }
+
     }
 
 
     protected function controller_exec1(){
 
         $sql_where = " where flag='1' ";
+        $sql_where_x = " where flag='1' ";
 
-        if(''===(string)$this->searchstr) {
+        //判断是否关键字查询
+        if(''===(string)$this->searchstr) {//不是关键字查询
+
             if(''!==(string)$this->classify1) {
                 $sql_where .= " and classify1='".$this->classify1."' ";
             }
@@ -68,93 +75,202 @@ class HySix1034 extends HySix{
                 $sql_where .= " and msgjihe='".$this->msgjihe."' ";
             }
 
+            //获取数据总数
             $sql_count_getvideo = "select count(*) as con from sixty_video ".$sql_where;
             //echo $sql_count_getvideo;
             //$list_count_getvideoarr = parent::__get('HyDb')->get_all($sql_count_getvideo);
             $list_count_getvideoarr = parent::func_runtime_sql_data($sql_count_getvideo);
             $list_count_getvideo = isset($list_count_getvideoarr[0]['con'])?$list_count_getvideoarr[0]['con']:'0';
 
+            //分页
             $pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_getvideo);
             $pagemsg = $pagearr['pagemsg'];
             $pagelimit = $pagearr['pagelimit'];
 
-            $sql_getvideo = "select id,id as vid,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,shicaititle,jieshao,create_datetime 
+
+            //查询视频表数据
+            $sql_getvideo = "select id,id as vid,classify1,classify2,classify3,classify4,showimg,biaoti, jieshao, 
+                        maketime, biaotichild,shicaititle,create_datetime 
 						from sixty_video
 						".$sql_where." order by id desc ".$pagelimit;
-        }else {
 
-            $sql_where .= " and ( biaoti like '%".$this->searchstr."%' or biaotichild like '%".$this->searchstr."%')";
-            $sql_count_getvideo = "SELECT COUNT(*) FROM((SELECT id FROM sixty_video ".$sql_where.") UNION ALL (SELECT id FROM sixty_tieshi_video where biaoti like '%".$this->searchstr."%')) as a";
+            $list_getvideo = parent::func_runtime_sql_data($sql_getvideo);
 
-            //echo $sql_count_getvideo;
-            //$list_count_getvideoarr = parent::__get('HyDb')->get_all($sql_count_getvideo);
-            $list_count_getvideoarr = parent::func_runtime_sql_data($sql_count_getvideo);
-            $list_count_getvideo = isset($list_count_getvideoarr[0]['con'])?$list_count_getvideoarr[0]['con']:'0';
 
-            $pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_getvideo);
-            $pagemsg = $pagearr['pagemsg'];
-            $pagelimit = $pagearr['pagelimit'];
 
-            $sql_getvideo = "(select id,id as vid,showimg,biaoti,jieshao,create_datetime 
-						from sixty_video
-						".$sql_where.")union all (select biaoti, showimg, id as vid, id, create_datetime, abstract from sixty_tieshi_video where biaoti like '%".$this->searchstr."%') order by id desc ".$pagelimit;
-            $list_video =  parent::__get('HyDb')->get_all($sql_getvideo);
-
-            $sql_video = "select id,id as vid,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,shicaititle,jieshao from sixty_video " . $sql_where;
-            $list_getvideo =  parent::__get('HyDb')->get_all($sql_video);
-
-            foreach($list_video as $k_l => $v_l){
-                foreach($list_getvideo as $k_g => $v_g){
-                    if($v_l['biaoti'] == $v_g['biaoti'] && $v_l['id'] == $v_g['id'] && $v_l['showimg'] == $v_g['showimg']){
-                        $list_video[$k_l]['classify1'] = $v_g['classify1'];
-                        $list_video[$k_l]['classify2'] = $v_g['classify2'];
-                        $list_video[$k_l]['classify3'] = $v_g['classify3'];
-                        $list_video[$k_l]['classify4'] = $v_g['classify4'];
-                        $list_video[$k_l]['biaotichild'] = $v_g['biaotichild'];
-                        $list_video[$k_l]['shicaititle'] = $v_g['shicaititle'];
-                        $list_video[$k_l]['jieshao'] = $v_g['jieshao'];
+            //判断用户是否登录
+            if(1!=parent::__get('usertype')) {
+                $r = false;
+            }else {
+                //查询用户表，看该手机号用户是否存在
+                $sql_getuserdata = "select * from sixty_user where id='".parent::__get('userid')."' order by id desc limit 1";
+                $this->userlistdata = $this->HyDb->get_row($sql_getuserdata);
+                if(count($this->userlistdata)<=0) {
+                    $r = false;
+                }else {
+                    //判断userkey是否正确
+                    $ser_tokenkey = parent::__get('userlistdata');
+                    if(''==parent::__get('userkey') || $ser_tokenkey['tokenkey']!=parent::__get('userkey')) {
+                        $r = false;
                     }else {
-                        $list_video[$k_l]['classify1'] = '';
-                        $list_video[$k_l]['classify2'] = '';
-                        $list_video[$k_l]['classify3'] = '';
-                        $list_video[$k_l]['classify4'] = '';
-                        $list_video[$k_l]['biaotichild'] = '';
-                        $list_video[$k_l]['shicaititle'] = '';
-                        $list_video[$k_l]['jieshao'] = '';
+                        $r = true;
                     }
                 }
             }
-        }var_dump($list_video);die;
 
 
 
-//
-//        $sql_count_getvideo = "select count(*) as con from sixty_video ".$sql_where;
-//        //echo $sql_count_getvideo;
-//        //$list_count_getvideoarr = parent::__get('HyDb')->get_all($sql_count_getvideo);
-//        $list_count_getvideoarr = parent::func_runtime_sql_data($sql_count_getvideo);
-//        $list_count_getvideo = isset($list_count_getvideoarr[0]['con'])?$list_count_getvideoarr[0]['con']:'0';
-//
-//        $pagearr = HyItems::hy_pagepage($this->now_page,$this->pagesize,$list_count_getvideo);
-//        $pagemsg = $pagearr['pagemsg'];
-//        $pagelimit = $pagearr['pagelimit'];
-//
-//        $sql_getvideo = "select id,id as vid,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,shicaititle,jieshao,create_datetime
-//						from sixty_video
-//						".$sql_where." order by id desc ".$pagelimit;
-//
-//        $sql_getvideo = "select a.id,a.id as vid,a.classify1,a.classify2,a.classify3,a.classify4,a.showimg,a.biaoti,a.biaotichild,a.shicaititle,a.jieshao,a.create_datetime,b.biaoti,b.showimg,b.id,b.class
-//						from sixty_video as a,sixty_tieshi_video as b
-//						".$sql_where." order by id desc ".$pagelimit;
-//        var_dump($sql_getvideo);die;
-// 		echo $sql_getvideo;
-// 		$list_getvideo =  parent::__get('HyDb')->get_all($sql_getvideo);
-        $list_getvideo = parent::func_runtime_sql_data($sql_getvideo);
+            if($r) {//用户已登录
 
-        foreach($list_getvideo as $keygv => $valgv) {
-            //$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);
-            $list_getvideo[$keygv]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$list_getvideo[$keygv]['showimg'],$this->imgwidth,$this->imgheight);
+                //获取用户已收藏的视频
+//                $sql_sc = "select id, dataid from sixty_video_shoucang where userid = '" . parent::__get('userid') . "' and type = 1";
+                $sql_sc = "select id, dataid from sixty_video_shoucang where userid = '" . 1 . "' and type = 1";
+                $list_sc = parent::__get('HyDb')->get_all($sql_sc);
+                if(count($list_sc) > 0) {
+                    foreach($list_getvideo as $keygv => $valgv) {
+                        //$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);
+                        foreach($list_sc as $k_sc => $v_sc) {
+                            if($valgv['id'] == $v_sc['dataid']) {
+                                $list_getvideo[$keygv]['coll'] = '1';//视频已收藏
+                                break;
+                            } else {
+                                $list_getvideo[$keygv]['coll'] = '2';//视频未收藏
+                            }
+                        }
+                        $list_getvideo[$keygv]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $list_getvideo[$keygv]['showimg'], $this->imgwidth, $this->imgheight);
+                    }
+                }
+
+            } else {
+                foreach($list_getvideo as $keygv => $valgv) {
+                    $list_getvideo[$keygv]['coll'] = '2';//视频未收藏
+                    $list_getvideo[$keygv]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $valgv['showimg'], $this->imgwidth, $this->imgheight);
+
+                }
+            }
+
+//var_dump($list_getvideo);die;
+//            //遍历结果集
+//            foreach($list_getvideo as $keygv => $valgv) {
+//                //$list_getvideo[$keygv]['create_date'] = substr($list_getvideo[$keygv]['create_datetime'],0,10);
+//                $list_getvideo[$keygv]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $list_getvideo[$keygv]['showimg'], $this->imgwidth, $this->imgheight);
+//            }
+
+        }else {//是关键字查询
+
+
+            //分页查询,视频表和小贴士表数据
+            $sql_where .= " and ( biaoti like '%" . $this->searchstr . "%' or biaotichild like '%" . $this->searchstr . "%')";
+            $sql_where_x .= " and ( biaoti like '%" . $this->searchstr . "%' )";
+            //$sql_where2 = "where sixty_video.flag = 1 and (sixty_video.biaoti like '%" . $this->searchstr . "%' or sixty_video.biaotichild like '%" . $this->searchstr . "%') and sixty_video_shoucang.userid = '" . parent::__get('userid') . "'";
+
+
+            //获取符合条件的2两张表的数据总条数
+            $sql_count_getvideo = "select count(*) as con from sixty_video " . $sql_where;
+            $sql_count_xiaotieshi = "select count(*) as con from sixty_tieshi_video " . $sql_where_x;
+            $count_getvideo = parent::__get('HyDb')->get_one($sql_count_getvideo);
+            $count_xiaotieshi = parent::__get('HyDb')->get_one($sql_count_xiaotieshi);
+            $sum_count = $count_getvideo + $count_xiaotieshi;  //总条数
+
+            if($sum_count == 0){
+                $rarr=array(
+                    'list' => array(),
+                );
+                $echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$rarr);
+                parent::hy_log_str_add($echojsonstr . "\n");
+                echo $echojsonstr;
+                return true;
+            }
+
+            //获取2张表每张表的分页显示条数
+            $pages_getvideo = floor($count_getvideo / $sum_count * $this->pagesize);
+            $pages_xiaotieshi = $sum_count - $pages_getvideo;
+
+
+            //显示给前段的分页信息
+            $pagearr = HyItems::hy_pagepage($this->now_page, $this->pagesize, $sum_count);
+            $pagemsg = $pagearr['pagemsg'];
+
+
+            //视频表分页信息
+            $pagearr_v = HyItems::hy_pagepage($this->now_page, $pages_getvideo, $count_getvideo);
+            //$pagemsg = $pagearr['pagemsg'];
+            $pagelimit_v = $pagearr_v['pagelimit'];
+
+
+            //小贴士表分页信息
+            $pagearr_x = HyItems::hy_pagepage($this->now_page, $pages_xiaotieshi, $count_xiaotieshi);
+            //$pagemsg = $pagearr['pagemsg'];
+            $pagelimit_x = $pagearr_x['pagelimit'];
+
+
+            //拼接SQL语句
+            $sql_get_v = "select id,id as vid,classify1,classify2,classify3,classify4,showimg,biaoti,biaotichild,
+                        shicaititle,maketime,jieshao,create_datetime 
+						from sixty_video
+						" . $sql_where . " order by id desc " . $pagelimit_v;
+
+            $sql_get_x = "select id,id as vid,showimg,biaoti,create_datetime 
+						from sixty_tieshi_video
+						" . $sql_where_x . " order by id desc " . $pagelimit_x;
+
+            //视频表数据
+            $list_v = parent::__get('HyDb')->get_all($sql_get_v);
+            //小贴士表数据
+            $list_x = parent::__get('HyDb')->get_all($sql_get_x);
+
+//var_dump($list_v);die;
+            //判断用户是否登录
+//            $r = parent::func_oneusercheck();
+//            $r = 1;
+//            if($r) {//用户已登录
+//                //获取用户已收藏的视频
+//                $sql_sc = "select id, dataid from sixty_video_shoucang where userid = '" . parent::__get('userid') . "' and type = 1";
+////                $sql_sc = "select id, dataid from sixty_video_shoucang where userid = '" . 1 . "' and type = 1";
+//                $list_sc = parent::__get('HyDb')->get_all($sql_sc);
+//                if(count($list_sc) > 0) {
+//                    foreach($list_v as $k_v => $v_v) {
+//                        foreach($list_sc as $k_sc => $v_sc) {
+//                            if($v_v['id'] == $v_sc['dataid']) {
+//                                $list_v[$k_v]['coll'] = '1';
+//                            } else {
+//                                $list_v[$k_v]['coll'] = '2';
+//                            }
+//                        }
+//                        $list_v[$k_v]['vtype'] = '1';
+//                        $list_v[$k_v]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $v_v['showimg'], $this->imgwidth, $this->imgheight);
+//                    }
+//                }
+//
+//            } else {
+//                foreach($list_v as $k_v => $v_v) {
+//                    $list_v[$k_v]['vtype'] = '1';
+//                    $list_v[$k_v]['coll'] = '2';
+//                    $list_v[$k_v]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $v_v['showimg'], $this->imgwidth, $this->imgheight);
+//
+//                }
+//            }
+
+            //遍历视频表结果集
+            foreach($list_v as $k_v => $v_v) {
+                $list_v[$k_v]['vtype'] = '1';
+                $list_v[$k_v]['coll'] = '2';
+                $list_v[$k_v]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $v_v['showimg'], $this->imgwidth, $this->imgheight);
+
+            }
+
+            //遍历小贴士表结果集
+            foreach($list_x as $k_x => $v_x) {
+                $list_x[$k_x]['vtype'] = '2';
+                $list_x[$k_x]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $v_x['showimg'], $this->imgwidth, $this->imgheight);
+            }
+
+            //合并数据
+            $list_getvideo = array_merge($list_v, $list_x);
+
+
         }
+
 
         $rarr = array(
             'pagemsg' => $pagemsg,
@@ -162,7 +278,7 @@ class HySix1034 extends HySix{
         );
 
         $echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$rarr);
-        parent::hy_log_str_add($echojsonstr."\n");
+        parent::hy_log_str_add($echojsonstr . "\n");
         echo $echojsonstr;
         return true;
 

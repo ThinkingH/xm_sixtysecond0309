@@ -34,17 +34,19 @@ class HySix1023 extends HySix{
 
 	
 	public function controller_exec1(){
-
+//	    $a = 1;
 	    //查找收藏表数据
 		$sql_pan = "select id from sixty_video_shoucang where dataid='".$this->nowid."' and userid='".parent::__get('userid')."' and type='1' order by id desc limit 1";
+//		$sql_pan = "select id from sixty_video_shoucang where dataid='".$this->nowid."' and userid='".$a."' and type='1' order by id desc limit 1";
 		$list_pan = parent::__get('HyDb')->get_one($sql_pan);
 
 
 		if(1==$this->typeid) {//收藏类型为1，添加收藏
-			$sql_videopan = "select id from sixty_video where id='".$this->nowid."' and userid='".parent::__get('userid')."' and type='1' order by id desc limit 1";
-			$list_videopan = parent::__get('HyDb')->get_one($sql_pan);
-			if($list_videopan>0 && $list_pan<=0) {
+			$sql_videopan = "select id from sixty_video where id='".$this->nowid."'and flag='1' order by id desc limit 1";
+//			$sql_videopan = "select id from sixty_video where id='".$this->nowid."' and flag='1' order by id desc limit 1";
+			$list_videopan = parent::__get('HyDb')->get_one($sql_videopan);
 
+			if($list_videopan<=0 || $list_pan>0) {
                 //数据转为json，写入日志并输出
 				$echojsonstr = HyItems::echo2clientjson('101','收藏失败');
 				parent::hy_log_str_add($echojsonstr."\n");
@@ -53,13 +55,17 @@ class HySix1023 extends HySix{
 			}else {
                 //把新数据插入收藏表
 				$sql_insert = "insert into sixty_video_shoucang (type,userid,dataid,create_datetime) values('1','".parent::__get('userid')."','".$this->nowid."','".date('Y-m-d H:i:s')."')";
+//				$sql_insert = "insert into sixty_video_shoucang (type,userid,dataid,create_datetime) values('1','".$a."','".$this->nowid."','".date('Y-m-d H:i:s')."')";
 				$list_insert =  parent::__get('HyDb')->execute($sql_insert);
 
+                    $echojsonstr = HyItems::echo2clientjson('100','收藏成功');
+                    parent::hy_log_str_add($echojsonstr."\n");
+                    echo $echojsonstr;
+                    return true;
+
+//                var_dump($list_insert);die;
                 //数据转为json，写入日志并输出
-				$echojsonstr = HyItems::echo2clientjson('100','收藏成功');
-				parent::hy_log_str_add($echojsonstr."\n");
-				echo $echojsonstr;
-				return false;
+
 				
 			}
 			

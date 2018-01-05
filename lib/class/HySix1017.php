@@ -47,7 +47,7 @@ class HySix1017 extends HySix{
 
 		$hy_classifynamearr = array();
 		//查询分类信息表
-		$sql_getcontent = "select id,name,childname,content from sixty_classifymsg";
+		$sql_getcontent = "select id,name,childname,content from sixty_classifymsg where flag = 1";
 		$list_getcontent = parent::__get('HyDb')->get_all($sql_getcontent);
 		//遍历结果集
 		foreach($list_getcontent as $valgc) {
@@ -66,7 +66,7 @@ class HySix1017 extends HySix{
 			    //把分类1视频数目存入输出数组
 				$echoallcon += $valgc['con'];
 				if(''!=$valgc['classify1']) {//分类1中不为空
-                    //判断分类1中子名称是否存在，不存在给一个默认值空
+                    //判断分类1中子名称是否存在，不存在给一个空
 					$tmpchildname = isset($hy_classifynamearr[$valgc['classify1']]['childname'])?$hy_classifynamearr[$valgc['classify1']]['childname']:'';
 					//拼接分类1数组
 					$tmparr = array(

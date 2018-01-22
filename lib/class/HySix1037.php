@@ -51,12 +51,12 @@ class HySix1037 extends HySix{
             if($this->nickname!=''){//昵称不为空
                 $useredit_sql .= " nickname='".$this->nickname."', ";
             }
-            if($this->describes!=''){//描述不为空
+
                 $useredit_sql .= " describes='".$this->describes."', ";
-            }
-            if($this->address!=''){//地址不为空
+
+
                 $useredit_sql .= " address='".$this->address."', ";
-            }
+
 
             //去掉sql语句结尾处 ,
             $useredit_sql = rtrim($useredit_sql,', ');

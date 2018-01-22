@@ -95,12 +95,12 @@ class HySix1040 extends HySix{
         }
 
 
-        //查询大家的投稿
-        $sql_id_3 = "select word, id, showimg, keyword from sixty_icon where id = 3 limit 1";
-        $res_id_3 = parent::__get('HyDb')->get_row($sql_id_3);
-        $res_id_3['keyword'] = 'cookbook';
-        $res_id_3['showimg'] = HyItems::hy_qiniuimgurl('sixty-jihemsg',$res_id_3['showimg'],$this->imgwidth,$this->imgheight);
-        array_push($list_icon,$res_id_3);
+//        //查询大家的投稿
+//        $sql_id_3 = "select word, id, showimg, keyword from sixty_icon where id = 3 limit 1";
+//        $res_id_3 = parent::__get('HyDb')->get_row($sql_id_3);
+//        $res_id_3['keyword'] = 'cookbook';
+//        $res_id_3['showimg'] = HyItems::hy_qiniuimgurl('sixty-jihemsg',$res_id_3['showimg'],$this->imgwidth,$this->imgheight);
+//        array_push($list_icon,$res_id_3);
 
 
         $echojsonstr = HyItems::echo2clientjson('100', '数据获取成功', $list_icon);

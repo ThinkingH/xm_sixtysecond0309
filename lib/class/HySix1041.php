@@ -14,6 +14,7 @@ class HySix1041 extends HySix{
     private $contentdata;
     private $plid;
     private $userdata;
+    private $fid;
 
     //数据的初始化
     function __construct($input_data){
@@ -30,8 +31,8 @@ class HySix1041 extends HySix{
         $this->typeid          = isset($input_data['typeid']) ? $input_data['typeid'] : '' ; //类型id字段（1文字评论，2图片评论, 3回复）
         $this->contentdata   = isset($input_data['contentdata']) ? $input_data['contentdata'] : '' ; //文字评论内容
         $this->plid   = isset($input_data['plid']) ? $input_data['plid'] : '' ; //被回复的评论id
-        $this->userdata   = isset($input_data['userdata']) ? $input_data['userdata'] : '' ; //被回复评论的用户昵称
-
+        $this->userdata   = isset($input_data['userdata']) ? $input_data['userdata'] : '' ; //被回复评论的用户ID
+        $this->fid     = isset($input_data['fid'])?$input_data['fid']:'0';//顶层的对视频的品论的ID
     }
 
 
@@ -54,7 +55,7 @@ class HySix1041 extends HySix{
         //根据ID查询视频信息
         $sql_videopan = "select id from sixty_video where id='".$this->dataid."'";
         $list_videopan = parent::__get('HyDb')->get_one($sql_videopan);
-        if($list_videopan<=0) {//查询结果为空
+        if(count($list_videopan)<=0) {//查询结果为空
             $echojsonstr = HyItems::echo2clientjson('101','指定的评论视频id不存在');
             parent::hy_log_str_add($echojsonstr."\n");
             echo $echojsonstr;
@@ -173,34 +174,81 @@ class HySix1041 extends HySix{
             return false;
         }
 
-        //根据ID查询视频信息
-        $sql_video = "select id, type, userid from sixty_video where id='".$this->dataid."'";
-        $list_video = parent::__get('HyDb')->get_one($sql_video);
+        if(''==$this->fid) {
+            $echojsonstr = HyItems::echo2clientjson('101','层主id不能为空');
+            parent::hy_log_str_add($echojsonstr."\n");
+            echo $echojsonstr;
+            return false;
+        }
 
-        if($list_video<=0) {//查询结果为空
+        //根据ID查询视频信息
+        $sql_video = "select id, flag from sixty_video where id='".$this->dataid."'";
+        $list_video = parent::__get('HyDb')->get_row($sql_video);
+
+        if(count($list_video)<=0) {//查询结果为空
             $echojsonstr = HyItems::echo2clientjson('101','指定的评论视频id不存在');
             parent::hy_log_str_add($echojsonstr."\n");
             echo $echojsonstr;
             return false;
         }
 
-        if($list_video['type'] == 2){
-            $echojsonstr = HyItems::echo2clientjson('101','指定的评论类型不正确');
+        if($list_video['flag'] == 2){//判断该视频是否是启用状态
+            $echojsonstr = HyItems::echo2clientjson('101','指定的视频类型不正确');
             parent::hy_log_str_add($echojsonstr."\n");
             echo $echojsonstr;
             return false;
         }
 
+        //准备插入数据
         $this->contentdata = base64_encode($this->contentdata);
         $date = date('Y-m-d H:i:s',time());
-        $sql_plb = "insert into sixty_pinglun_back ('content, userid, create_datetime, plid, vid, userdata') VALUE 
-                    ('".$this->contentdata."','". parent::__get('userid')."','".$date."','".$this->plid."','".$this->dataid."','".$this->userdata."')";
+
+        //插入数据库
+        $sql_plb = "insert into sixty_pinglun_back (content, userid, create_datetime, plid, vid, userdata, fplid) VALUE
+                    ('".$this->contentdata."','". parent::__get('userid')."','".$date."','".$this->plid."',
+                    '".$this->dataid."','".$this->userdata."','".$this->fid."')";
 
         $insert_plback = parent::__get('HyDb')->execute($sql_plb);
         parent::hy_log_str_add($sql_plb."\n");
 
+        if(!$insert_plback){
+            //数据转为json，写入日志并输出
+            $echojsonstr = HyItems::echo2clientjson('100','发布失败');
+            parent::hy_log_str_add($echojsonstr."\n");
+            echo $echojsonstr;
+            return false;
+        }
 
-        $echojsonstr = HyItems::echo2clientjson('101','评论成功');
+        $sql_news = "insert into sixty_user_news (userid, create_datetime, to_userid, vid, message, flag) VALUE
+                    ('" . parent::__get('userid')."','".$date."','".$this->userdata."',
+                    '".$this->dataid."','".$this->contentdata."', '2')";
+        $insert_news = parent::__get('HyDb')->execute($sql_news);
+        parent::hy_log_str_add($sql_news."\n");
+
+        //根据id获取被回复的用户的极光id
+        $sql_jgid = "select jiguangid from sixty_user where id = '" . $this->userdata . "'";
+        $res_jgid = parent::__get('HyDb')->get_one($sql_jgid);
+
+//        var_dump($res_jgid);die;
+        //根据id获取该用户昵称
+        $sql_id = "select nickname from sixty_user where id = '" . parent::__get('userid') . "'";
+        $res_id = parent::__get('HyDb')->get_one($sql_id);
+
+        if(!$res_jgid || !$res_id){
+            $echojsonstr = HyItems::echo2clientjson('100','评论成功');
+            parent::hy_log_str_add($echojsonstr."\n");
+            echo $echojsonstr;
+            return true;
+        }
+
+        //发起推送
+        if($res_id != ''){
+            $message = $res_id.'刚刚回复了您的留言';
+            $res_push = parent::func_jgpush($res_jgid,$message,'liuyan');
+        }
+
+
+        $echojsonstr = HyItems::echo2clientjson('100','评论成功');
         parent::hy_log_str_add($echojsonstr."\n");
         echo $echojsonstr;
         return true;
@@ -221,7 +269,6 @@ class HySix1041 extends HySix{
         if($this->typeid == 3){
             $this->controller_exec2();
         }else{
-
             $this->controller_edituserimage();
         }
 

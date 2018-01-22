@@ -20,7 +20,7 @@ class HySix1026 extends HySix {
 		//接收qqid
 		$this->qqid = isset($input_data['qqid']) ? $input_data['qqid']:'';  //
 	
-		$this->sex = isset($input_data['sex']) ? $input_data['sex']:'';  //性别
+		$this->sex = isset($input_data['sex']) ? $input_data['sex']:'3';  //性别
 		$this->nickname = isset($input_data['nickname']) ? $input_data['nickname']:'';  //昵称
 		$this->headimgurl = isset($input_data['headimgurl']) ? $input_data['headimgurl']:'';  //头像
 		
@@ -51,7 +51,11 @@ class HySix1026 extends HySix {
 			
 			//随机生成的userkey
 			$userkey = parent::func_create_randkey();
-			
+
+            if($this->sex == ''){
+                $this->sex = 3;
+            }
+
 			//插入用户
 			$userdatasql = "insert into sixty_user (qqid,tokenkey,sex,nickname,touxiang,create_datetime)
 								values ('".$this->qqid."','".$userkey."','".$this->sex."','".$this->nickname."',

@@ -51,7 +51,10 @@ class HySix1004 extends HySix {
 			
 			//随机生成的userkey
 			$userkey = parent::func_create_randkey();
-			
+
+			if($this->sex == ''){
+                $this->sex = 3;
+            }
 			//插入用户
 			$userdatasql = "insert into sixty_user (openid,tokenkey,sex,nickname,touxiang,create_datetime)
 								values ('".$this->openid."','".$userkey."','".$this->sex."','".$this->nickname."',

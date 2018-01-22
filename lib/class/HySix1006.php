@@ -17,7 +17,7 @@ class HySix1006 extends HySix{
 	
 		//意见
 		$this->yijian   = isset($input_data['yijian'])? $input_data['yijian']:'';  //用户提交的意见
-		$this->contact   = isset($input_data['contact'])? $input_data['contact']:'';  //用户提交的意见
+		$this->contact   = isset($input_data['contact'])? $input_data['co ntact']:'';  //用户提交的意见
 	
 	}
 	

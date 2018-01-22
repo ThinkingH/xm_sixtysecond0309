@@ -148,28 +148,45 @@ class HySix1035 extends HySix{
             }
 
 
-            //小贴士
-//            $sql_tips = "select * from sixty_tieshi_video where flag = 1 limit 2";
-//            $list_tips = parent::__get('HyDb')->get_all($sql_tips);
-//
-//            if(count($list_tips) > 0){
-//                foreach($list_tips as $k_t => $k_v){
-//                    //获取七牛云视频地址
-//                    $list_tips[$k_t]['videourl'] = HyItems::hy_qiniubucketurl('sixty-video',$k_v['videosavename']);
-//                    //获取七牛云图片地址
-//                    $list_tips[$k_t]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$list_getvideo['showimg'],$this->imgwidth,$this->imgheight);
-//                }
-//            }
-
+            //判断该视频是否有对应小贴士
             if($list_getvideo['tips'] != ''){
-                $sql_tips = "select biaoti, showimg, videosavename from sixty_tieshi_video where flag = 1 and id in(".$list_getvideo['tips'].")";
+
+                //根据id查询小贴士表数据
+                $sql_tips = "select c.name, v.biaoti, v.id, v.showimg, v.abstract as jieshao, v.videosavename,v.class from sixty_tieshi_video as v 
+left join sixty_tieshi_class as c on (v.class = c.id) where flag = 1 and v.id in(".$list_getvideo['tips'].")";
                 $list_tips = parent::__get('HyDb')->get_all($sql_tips);
+
+                //判断查询结果是否为空
                 if(count($list_tips) > 0){
+//var_dump($list_tips);die;
+                    //遍历结果集
                     foreach($list_tips as $k_tips => $v_tips){
+                        //根据id查询小贴士表数据
+                        $sql_class_v = "select abstract as jieshao biaoti, showimg, videosavename, class from sixty_tieshi_video where flag = 1 and class = ".
+                            $v_tips['class'].' and id <> '.$v_tips['id'] .' order by create_datetime limit 20';
+
+                        $list_class_v = parent::__get('HyDb')->get_all($sql_class_v);
+//
+                        if(count($list_class_v) > 0){
+                            foreach($list_class_v as $k_class_v => $v_class_v){
+                                //获取七牛云视频地址
+                                $list_class_v[$k_class_v]['videourl'] = HyItems::hy_qiniubucketurl('sixty-video',$v_class_v['videosavename']);
+                                //获取七牛云图片地址
+                                $list_class_v[$k_class_v]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$v_class_v['showimg'],$this->imgwidth,$this->imgheight);
+                            }
+                            //该分类下其他视频
+                            $list_tips[$k_tips]['elsevideo'] = $list_class_v;
+                        }else{
+                            //该分类下其他视频
+                            $list_tips[$k_tips]['elsevideo'] = array();
+                        }
+
                         //获取七牛云视频地址
                         $list_tips[$k_tips]['videourl'] = HyItems::hy_qiniubucketurl('sixty-video',$v_tips['videosavename']);
                         //获取七牛云图片地址
                         $list_tips[$k_tips]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$v_tips['showimg'],$this->imgwidth,$this->imgheight);
+                        $list_tips[$k_tips]['classname'] = $v_tips['name'];
+                        unset($list_tips[$k_tips]['name']);
                     }
                 }
             }else{
@@ -177,20 +194,20 @@ class HySix1035 extends HySix{
             }
 
 
-//            var_dump($list_tips);die;
             //猜你喜欢，获取与该视频相同3级分类下的视频信息
-            $sql_like = "select id, showimg, biaoti from sixty_video where classify3 ='".$list_getvideo['classify3']."'";
+            $sql_like = "select id, showimg, biaoti, maketime, biaotichild, jieshao from sixty_video where classify3 ='".$list_getvideo['classify3']."' order by rand() limit 10";
             $data_like = parent::__get('HyDb')->get_all($sql_like);
 
             //判断查询结果是否为空
             if(count($data_like) >0){//不为空
                  //遍历结果集获取七牛云图片地址
                 foreach($data_like as $k_like => $v_like){
-                    $data_like[$k_like]['showimg'] = HyItems::hy_qiniuimgurl('sixty-imgpinglun',$v_like['showimg'],$this->imgwidth,$this->imgheight);
+                    $data_like[$k_like]['showimg'] = HyItems::hy_qiniuimgurl('sixty-videoimage',$v_like['showimg'],$this->imgwidth,$this->imgheight);
                 }
             }
             $list_getvideo['youlike'] = $data_like;
             $list_getvideo['tips'] = $list_tips;
+            $list_getvideo['share'] = 'http://api.60video.net/jump.php?class=product&id='.$this->nowid;
 
 
             //数据转为json，写入日志并输出

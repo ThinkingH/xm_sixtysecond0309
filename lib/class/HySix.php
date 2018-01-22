@@ -175,15 +175,15 @@ class HySix{
 			
 			if($type=='1') {
 				//登录
-				$sendmessage = '【兑宝流量】本次验证码为：'.$vcode.'，用于登录兑宝app,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于登录60秒app,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else if($type=='2') {
 				//注册
-				$sendmessage = '【馅饼流量】本次验证码为：'.$vcode.'，用于注册馅饼app账号,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于注册60秒app账号,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else if($type=='3') {
 				//重置
-				$sendmessage = '【馅饼流量】本次验证码为：'.$vcode.'，用于重置馅饼app密码,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于重置60秒app密码,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else {
 				return false;
@@ -264,7 +264,7 @@ class HySix{
 		}else {
 			
 			//苹果测试账号
-			if(($phone=='13800138008' || $phone=='15632181449') && $vcode=='123456') {
+			if(($phone=='13800138008' || $phone=='15632181449' || '15111111111') && $vcode=='123456') {
 				return true;
 			}
 			

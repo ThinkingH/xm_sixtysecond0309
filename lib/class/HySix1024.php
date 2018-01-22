@@ -49,12 +49,17 @@ class HySix1024 extends HySix{
 		
 		$list_gettongzhi =  parent::__get('HyDb')->get_all($sql_gettongzhi);
 
+		//获取官方用户头像
+        $sql_user = "select touxiang from sixty_user where id = 1";
+        $list_touxiang =  parent::__get('HyDb')->get_one($sql_user);
 		//遍历结果集
 		foreach($list_gettongzhi as $keygz => $valgz) {
 		    //转换日期格式并存入结果集
 			$list_gettongzhi[$keygz]['create_date'] = date('Y年m月d日',strtotime($list_gettongzhi[$keygz]['create_datetime']));
-		}
-		
+			$list_gettongzhi[$keygz]['touxiang'] = HyItems::hy_qiniuimgurl('sixty-videoimage', $list_touxiang, $this->imgwidth, $this->imgheight);
+
+        }
+
 
 		//准备输出数字
 		$rarr = array(

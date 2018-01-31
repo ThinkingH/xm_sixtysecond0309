@@ -173,9 +173,22 @@ class HySix1041 extends HySix{
             echo $echojsonstr;
             return false;
         }
-
         if(''==$this->fid) {
             $echojsonstr = HyItems::echo2clientjson('101','层主id不能为空');
+            parent::hy_log_str_add($echojsonstr."\n");
+            echo $echojsonstr;
+            return false;
+        }
+
+        if(''==$this->plid) {
+            $echojsonstr = HyItems::echo2clientjson('101','被评论id不能为空');
+            parent::hy_log_str_add($echojsonstr."\n");
+            echo $echojsonstr;
+            return false;
+        }
+
+        if(''==$this->userdata) {
+            $echojsonstr = HyItems::echo2clientjson('101','被评论用户id不能为空');
             parent::hy_log_str_add($echojsonstr."\n");
             echo $echojsonstr;
             return false;
@@ -184,7 +197,6 @@ class HySix1041 extends HySix{
         //根据ID查询视频信息
         $sql_video = "select id, flag from sixty_video where id='".$this->dataid."'";
         $list_video = parent::__get('HyDb')->get_row($sql_video);
-
         if(count($list_video)<=0) {//查询结果为空
             $echojsonstr = HyItems::echo2clientjson('101','指定的评论视频id不存在');
             parent::hy_log_str_add($echojsonstr."\n");
@@ -229,7 +241,7 @@ class HySix1041 extends HySix{
         $sql_jgid = "select jiguangid from sixty_user where id = '" . $this->userdata . "'";
         $res_jgid = parent::__get('HyDb')->get_one($sql_jgid);
 
-//        var_dump($res_jgid);die;
+
         //根据id获取该用户昵称
         $sql_id = "select nickname from sixty_user where id = '" . parent::__get('userid') . "'";
         $res_id = parent::__get('HyDb')->get_one($sql_id);
@@ -244,7 +256,7 @@ class HySix1041 extends HySix{
         //发起推送
         if($res_id != ''){
             $message = $res_id.'刚刚回复了您的留言';
-            $res_push = parent::func_jgpush($res_jgid,$message,'liuyan');
+            $res_push = parent::func_jgpush($res_jgid,$message,'messagebox');
         }
 
 
@@ -261,10 +273,10 @@ class HySix1041 extends HySix{
     public function controller_init(){
 
         //判断正式用户通讯校验参数
-        $r = parent::func_oneusercheck();
-        if($r===false){
-            return false;
-        }
+//        $r = parent::func_oneusercheck();
+//        if($r===false){
+//            return false;
+//        }
 
         if($this->typeid == 3){
             $this->controller_exec2();

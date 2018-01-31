@@ -39,6 +39,7 @@ class HySix1037 extends HySix{
         //判断性别，生日，昵称， 描述是否为空
         if($this->sex!='' || $this->birthday!='' || $this->nickname!='' || $this->describes!='' || $this->address!=''){
 
+
             //sql语句开头
             $useredit_sql = "update sixty_user set ";
 
@@ -49,13 +50,25 @@ class HySix1037 extends HySix{
                 $useredit_sql .= " birthday='".$this->birthday."', ";
             }
             if($this->nickname!=''){//昵称不为空
+                //判断头像是否重复
+                $sql_touxiang = "select id from sixty_user where nickname = '".$this->nickname."' and id <> '".parent::__get('userid')."'";
+
+                $res_touxiang = parent::__get('HyDb')->get_all($sql_touxiang);
+//            var_dump($res_touxiang);die;
+                if(count($res_touxiang) > 0){
+                    $echojsonstr = HyItems::echo2clientjson('101','该昵称已存在，请尝试其他昵称');
+                    parent::hy_log_str_add($echojsonstr."\n");
+                    echo $echojsonstr;
+                    return true;
+                }
                 $useredit_sql .= " nickname='".$this->nickname."', ";
             }
 
-                $useredit_sql .= " describes='".$this->describes."', ";
+
+            $useredit_sql .= " describes='".$this->describes."', ";
 
 
-                $useredit_sql .= " address='".$this->address."', ";
+            $useredit_sql .= " address='".$this->address."', ";
 
 
             //去掉sql语句结尾处 ,

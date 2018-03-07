@@ -29,16 +29,14 @@ class HySix1047 extends HySix{
         }
 
         //获取开关控制表数据
-        $sql_onoff = "select id,name,flag from sixty_on_off where version = '".parent::__get('version')."'";
+        $sql_onoff = "select id,name,flag from sixty_on_off where version = '".parent::__get('version')."' and 
+                    type = '".parent::__get('system')."'";
 
         $list_onoff = parent::__get('HyDb')->get_all($sql_onoff);
 
 
-        //准备输出数组
-        $rarr['list'] = $list_onoff;
-var_dump($rarr);die;
         //数据转为json，写入日志并输出
-        $echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$rarr);
+        $echojsonstr = HyItems::echo2clientjson('100','数据获取成功',$list_onoff);
         parent::hy_log_str_add($echojsonstr."\n");
         echo $echojsonstr;
         return true;

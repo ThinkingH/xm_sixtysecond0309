@@ -136,6 +136,22 @@ $inputdataarr['update']        = trim(HyItems::arrayItem ( $_REQUEST, 'update' )
 $inputdataarr['push_state']        = trim(HyItems::arrayItem ( $_REQUEST, 'push_state' )); //推送状态
 
 
+$inputdataarr['typex']        = trim(HyItems::arrayItem ( $_REQUEST, 'typex' )); //小贴士请求类型
+
+
+$inputdataarr['address']        = trim(HyItems::arrayItem ( $_REQUEST, 'address' )); //住址
+
+
+$inputdataarr['plid']        = trim(HyItems::arrayItem ( $_REQUEST, 'plid' )); //评论ID
+$inputdataarr['userdata']        = trim(HyItems::arrayItem ( $_REQUEST, 'userdata' )); //评论人信息
+
+$inputdataarr['fid']        = trim(HyItems::arrayItem ( $_REQUEST, 'fid' )); //评论人信息
+
+$inputdataarr['imgwidthd']        = trim(HyItems::arrayItem ( $_REQUEST, 'imgwidthd' ));//合集详情页 图片尺寸
+$inputdataarr['imgheightd']        = trim(HyItems::arrayItem ( $_REQUEST, 'imgheightd' ));//合集详情页 图片尺寸
+
+
+
 
 // $inputdataarr['mobile']          = trim(HyItems::arrayItem ( $_REQUEST, 'mobile' ));          //联系人手机号
 // $inputdataarr['shouhuoren']      = trim(HyItems::arrayItem ( $_REQUEST, 'shouhuoren' ));      //收货人

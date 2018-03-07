@@ -175,15 +175,15 @@ class HySix{
 			
 			if($type=='1') {
 				//登录
-				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于登录60秒app,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒APP】本次验证码为：'.$vcode.'，用于登录60秒APP,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else if($type=='2') {
 				//注册
-				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于注册60秒app账号,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒APP】本次验证码为：'.$vcode.'，用于注册60秒APP账号,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else if($type=='3') {
 				//重置
-				$sendmessage = '【60秒】本次验证码为：'.$vcode.'，用于重置60秒app密码,'.$this->send_sms_vcode_minutes.'分钟内有效';
+				$sendmessage = '【60秒APP】本次验证码为：'.$vcode.'，用于重置60秒APP密码,'.$this->send_sms_vcode_minutes.'分钟内有效';
 				
 			}else {
 				return false;
@@ -264,7 +264,7 @@ class HySix{
 		}else {
 			
 			//苹果测试账号
-			if(($phone=='13800138008' || $phone=='15632181449' || '15111111111') && $vcode=='123456') {
+			if(($phone=='13800138008' || $phone=='15632181449' || $phone=='15111111111' || $phone=='15116951806') && $vcode=='123456') {
 				return true;
 			}
 			
@@ -358,7 +358,7 @@ class HySix{
 					$url = 'http://121.42.228.34/duanxinfasong/interface/smssend.php?md5key=e0f8978c0677a01aeac12cc90eed0949&nowtime='.time().'&phone='.$phone.'&message='.urlencode($message);
 					
 					$res = HyItems::vget($url,3000);
-					
+//                    $this->log_str .= '<-------'.$res."\n".'----->';
 					$content  = isset($res['content'])  ? trim($res['content']) : '';
 					$httpcode = isset($res['httpcode']) ? $res['httpcode'] : '';
 					$run_time = isset($res['run_time']) ? $res['run_time'] : '';

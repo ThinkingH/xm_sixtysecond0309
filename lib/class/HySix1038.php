@@ -52,7 +52,7 @@ class HySix1038 extends HySix{
             if(substr($newuserlist['touxiang'],0,4)!='http') {
 
                 //拼接七牛云头像链接
-                $newuserlist['touxiang'] = HyItems::hy_qiniuimgurl('sixty-user',$newuserlist['touxiang'],100,100,true);
+                $newuserlist['touxiang'] = HyItems::hy_qiniuimgurl('sixty-user',$newuserlist['touxiang'],250,250,true);
             }else {
                 //链接为微信的，不做处理
             }

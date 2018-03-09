@@ -273,10 +273,10 @@ class HySix1041 extends HySix{
     public function controller_init(){
 
         //判断正式用户通讯校验参数
-//        $r = parent::func_oneusercheck();
-//        if($r===false){
-//            return false;
-//        }
+       $r = parent::func_oneusercheck();
+       if($r===false){
+           return false;
+       }
 
         if($this->typeid == 3){
             $this->controller_exec2();

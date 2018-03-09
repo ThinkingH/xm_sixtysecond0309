@@ -256,7 +256,7 @@ class HySix{
 		$vcode   = trim($vcode);
 		
 		if($phone=='' || $vcode=='') {
-			$echojsonstr = HyItems::echo2clientjson('100','手机号或验证码不能为空');
+			$echojsonstr = HyItems::echo2clientjson('101','手机号或验证码不能为空');
 			$this->log_str .= $echojsonstr."\n";
 			echo $echojsonstr;
 			return false;
@@ -264,7 +264,7 @@ class HySix{
 		}else {
 			
 			//苹果测试账号
-			if(($phone=='13800138008' || $phone=='15632181449' || $phone=='15111111111' || $phone=='15116951806') && $vcode=='123456') {
+			if(($phone=='13800138008' || $phone=='15632181449' || $phone=='15111111111' || $phone=='15116951806'|| $phone=='13222222222') && $vcode=='123456') {
 				return true;
 			}
 			
@@ -280,7 +280,7 @@ class HySix{
 			
 			
 			if($list_getlast_vcode=='' || strlen($list_getlast_vcode)<4) {
-				$echojsonstr = HyItems::echo2clientjson('100','验证码超过有效期');
+				$echojsonstr = HyItems::echo2clientjson('101','验证码超过有效期');
 				$this->log_str .= $echojsonstr."\n";
 				echo $echojsonstr;
 				return false;
@@ -288,7 +288,7 @@ class HySix{
 			}else {
 				//判断查询到的验证码是否和提交过来的验证码相等
 				if($list_getlast_vcode!=$vcode) {
-					$echojsonstr = HyItems::echo2clientjson('100','验证码错误');
+					$echojsonstr = HyItems::echo2clientjson('101','验证码错误');
 					$this->log_str .= $echojsonstr."\n";
 					echo $echojsonstr;
 					return false;

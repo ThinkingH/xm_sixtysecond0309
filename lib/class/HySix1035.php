@@ -91,11 +91,34 @@ class HySix1035 extends HySix{
 
 
             //评论个数
-            $sql_count_getvideopinglun = "select count(*) as con from sixty_video_pinglun where vid='".$this->nowid."' and type='1' ";
-            $list_count_getvideopinglun = parent::__get('HyDb')->get_one($sql_count_getvideopinglun);
-            $list_getvideo['pingluncount'] = $list_count_getvideopinglun;
+            //获取评论表评论ID和评论个数
+            $sql_count_getvideopinglun = "select id from sixty_video_pinglun where vid='".$this->nowid."' and type='1'";
+            $list_count_getvideopinglun = parent::__get('HyDb')->get_all($sql_count_getvideopinglun);
 
+            //计算评论总数
+            $picpingluncount = count($list_count_getvideopinglun);
 
+// var_dump($picpingluncount);die;
+
+            if($picpingluncount > 0){
+                //获取顶层评论ID
+                $list_id = '';
+                foreach ($list_count_getvideopinglun as $key => $value) {
+                    $list_id .= $value['id'] .',';
+                }
+                $list_id = substr($list_id, 0, -1);
+
+                //获取评论回复表评论个数
+                $sql_count_getpinglun_back = "select count(id) as con from sixty_pinglun_back where fplid in(".$list_id.")";
+    //            $sql_count_getpinglun_back = "select count(id) as con from sixty_pinglun_back where vid = ".$this->nowid;
+                $count_getpinglun_back = parent::__get('HyDb')->get_one($sql_count_getpinglun_back);
+
+                $list_getvideo['pingluncount'] = $count_getpinglun_back + $picpingluncount;
+            }else{
+                $list_getvideo['pingluncount'] = $picpingluncount;
+            }
+            
+//            var_dump($list_getvideo['pingluncount']);die;
             //单图片评论个数
             $sql_count_getvideopinglunpic = "select count(*) as con from sixty_video_pinglun where vid='".$this->nowid."' and type='2' ";
             $list_count_getvideopinglunpic = parent::__get('HyDb')->get_one($sql_count_getvideopinglunpic);

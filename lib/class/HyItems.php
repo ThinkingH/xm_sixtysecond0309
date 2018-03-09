@@ -140,7 +140,7 @@ class HyItems {
 	
 	
 	
-	
+	//获取七牛云图片地址
 	public static function hy_qiniuimgurl($bucketname='',$imgname='',$width='',$height='',$canshu=true) {
 		$qiniubucketarr = json_decode(QINIUBUCKETSTR,true);
 		$returnimgurl = '';
@@ -878,7 +878,7 @@ class HyItems {
 		$jsonarr['sucerr'] = (string)$code;
 		$jsonarr['msg']  = (string)$msg;
 		$jsonarr['data'] = $data;
-		
+
 		return str_replace("\/", "/",  json_encode($jsonarr));
 // 		return json_encode($jsonarr);
 		
